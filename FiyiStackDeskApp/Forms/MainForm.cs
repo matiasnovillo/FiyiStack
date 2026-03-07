@@ -6,8 +6,6 @@ using FiyiStackDeskApp.Areas.FiyiStackDeskApp.FieldBack.Interfaces;
 using FiyiStackDeskApp.Areas.FiyiStackDeskApp.ProjectBack.Interfaces;
 using FiyiStackDeskApp.Areas.FiyiStackDeskApp.TableBack.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using FiyiStackDeskApp.Areas.FiyiStackDeskApp.VersionControlBack.Interfaces;
-using FiyiStackDeskApp.Areas.FiyiStackDeskApp.NewsInLoginPageBack.Interfaces;
 
 namespace FiyiStackDeskApp.Forms
 {
@@ -25,8 +23,6 @@ namespace FiyiStackDeskApp.Forms
         private readonly IDataBaseRepository _databaseRepository;
         private readonly ITableRepository _tableRepository;
         private readonly IFieldRepository _fieldRepository;
-        private readonly IVersionControlRepository _versionControlRepository;
-        private readonly INewsInLoginPageRepository _newsInLoginPageRepository;
 
         private readonly IG1ConfigurationRepository _g1ConfigurationRepository;
 
@@ -39,8 +35,6 @@ namespace FiyiStackDeskApp.Forms
             _databaseRepository = serviceProvider.GetRequiredService<IDataBaseRepository>() ?? throw new InvalidOperationException("IDataBaseRepository service is not registered.");
             _tableRepository = serviceProvider.GetRequiredService<ITableRepository>() ?? throw new InvalidOperationException("ITableRepository service is not registered.");
             _fieldRepository = serviceProvider.GetRequiredService<IFieldRepository>() ?? throw new InvalidOperationException("IFieldRepository service is not registered.");
-            _versionControlRepository = serviceProvider.GetRequiredService<IVersionControlRepository>() ?? throw new InvalidOperationException("IVersionControlRepository service is not registered.");
-            _newsInLoginPageRepository = serviceProvider.GetRequiredService<INewsInLoginPageRepository>() ?? throw new InvalidOperationException("INewsInLoginPageRepository service is not registered.");
 
             _g1ConfigurationRepository = serviceProvider.GetRequiredService<IG1ConfigurationRepository>() ?? throw new InvalidOperationException("IG1ConfigurationRepository service is not registered.");
 
@@ -49,24 +43,11 @@ namespace FiyiStackDeskApp.Forms
 
             Initialize();
 
-            //VERIFY VERSION OF THE APPLICATION
-            decimal CurrentVersion = (decimal)1.01;
-            decimal LastVersion = _versionControlRepository.GetByVersionControlId(1).VersionNumber;
-
-            if (CurrentVersion < LastVersion)
-            {
-                //SHOW UPDATE MESSAGE
-                MessageBox.Show($"Hay una nueva versión de FiyiStack disponible. Por favor, actualice la aplicación.", "FiyiStack | Actualización disponible", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-
             LoadPanelLogin();
         }
 
         private void Initialize()
         {
-            LinkLabelWhatsApp.Text = "+543512329541";
-            LinkLabelWebContact.Text = "fiyistack.com/contacto";
-            LinkLabelEmail.Text = "support@fiyistack.com";
 
             lblMessageDockedBottom.Text = "";
 

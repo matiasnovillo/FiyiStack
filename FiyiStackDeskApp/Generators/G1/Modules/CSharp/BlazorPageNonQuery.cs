@@ -36,11 +36,11 @@ else
     <{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._NavBarForDashboard Pagina=""{Table.Name}""></{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._NavBarForDashboard>
     <div class=""container-fluid px-2 px-md-4"">
         <div class=""page-header min-height-300 border-radius-xl mt-4""
-             style=""background-image: url('assets/img/illustrations/Landscape2.jpg');"">
-            <span class=""mask bg-gradient-primary opacity-6""></span>
+             style=""background-image: url('img/System/Landscape.jpg');"">
+            <span class=""mask bg-gradient-dark opacity-6""></span>
         </div>
         <div class=""card card-body mx-3 mx-md-4 mt-n6"">
-            <div class=""card-header mb-0 pb-0"">
+            <div class=""card-header mb-0 pb-0 px-4"">
                 <div class=""d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center"">
                     <h3 class=""mb-3 mb-md-0"">
                         @if ({Table.Name}Id == 0)
@@ -53,7 +53,7 @@ else
                         }}
                     </h3>
                     <div class=""d-flex"">
-                        <NavLink class=""btn btn-outline-dark"" href=""CMS/{Table.Area}/{Table.Name}QueryPage"">
+                        <NavLink class=""btn btn-white btn-sm"" href=""CMS/{Table.Area}/{Table.Name}QueryPage"">
                             <span class=""fas fa-chevron-left""></span>
                             &nbsp;
                             Volver
@@ -65,7 +65,7 @@ else
                 </div>
                 <hr class=""mt-3"" />
             </div>
-            <div class=""card-body px-0"">
+            <div class=""card-body px-4"">
                 <form method=""post"" @onsubmit=""Submit""
                       @formname=""{Table.Name.ToLower()}-form"" class=""mb-4"">
                     <AntiforgeryToken />
@@ -73,19 +73,22 @@ else
                     <hr />
                     @((MarkupString)Message)
                     <div class=""d-flex justify-content-between"">
-                        <button id=""btn-submit"" type=""submit""
-                                class=""btn btn-success"">
-                            <i class=""fas fa-pen""></i>
-                            @if ({Table.Name}Id == 0)
+                        <button id=""btn-submit"" 
+                        type=""submit""
+                        class=""btn btn-success""
+                        disabled=""@IsSubmitting"">
+                            @if (IsSubmitting)
                             {{
-                                <span>Agregar</span>
+                                <i class=""fas fa-spinner fa-spin""></i>
+                                <span>&nbsp;Guardando...</span>
                             }}
                             else
                             {{
-                                <span>Editar</span>
+                                <i class=""fas fa-pen""></i>
+                                <span>&nbsp;@({Table.Name}Id == 0 ? ""Agregar"" : ""Editar"")</span>
                             }}
                         </button>
-                        <NavLink class=""btn btn-outline-dark mx-3"" href=""CMS/{Table.Area}/{Table.Name}QueryPage"">
+                        <NavLink class=""btn btn-white mx-3"" href=""CMS/{Table.Area}/{Table.Name}QueryPage"">
                             <span class=""fas fa-chevron-left""></span>
                             &nbsp;Volver
                         </NavLink>
@@ -119,7 +122,7 @@ else
     [SupplyParameterFromForm]
     private {Table.Name} {Table.Name} {{ get; set; }} = new();
 
-    private User User {{ get; set; }} = new();
+    private bool IsSubmitting = false;
 
     //Error messages for inputs
     {GeneratorConfigurationComponent.G1FieldChainer.ErrorMessage_InNonQueryBlazor}
@@ -143,7 +146,7 @@ else
                 await base.IsUserAvailableToUseThisPage(""/CMS/{Table.Area}/{Table.Name}QueryPage"");
 
                 lstFoldersAndPagesForSideNavDTO = rolemenuRepository
-                    .GetAllPagesAndFoldersForCMSByRoleId(base.User.RoleId);
+                    .GetAllPagesAndFoldersForCMSByRoleId(base.User!.RoleId);
 
                 //FOREIGN LISTS (TABLES)
                 {GeneratorConfigurationComponent.G1FieldChainer.ForeignListsGet_BlazorNonQueryPage}
@@ -170,7 +173,7 @@ else
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
             await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Error"", ""Hubo un error. Intente nuevamente."", ""error"");
         }}
@@ -184,6 +187,14 @@ else
     {{
         try
         {{
+            if (IsSubmitting)
+            {{
+                return;
+            }}
+
+            IsSubmitting = true;
+            await InvokeAsync(StateHasChanged);
+
             if(Check("""") != null)
             {{
                 await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Atención"", ""No se puede guardar. Hay campos faltantes. Operación cancelada."", ""warning"");
@@ -217,13 +228,15 @@ else
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
             await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Error"", ""Hubo un error. Intente nuevamente."", ""error"");
         }}
         finally
         {{
             //Re-render the page
+            IsSubmitting = false;
+
             await InvokeAsync(StateHasChanged);
         }}
     }}

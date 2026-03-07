@@ -154,12 +154,7 @@ namespace FiyiStackDeskApp.Forms
             btnDatabaseDeleteDataBasesFromListViewDatabase = new PictureBox();
             btnDatabaseSaveDatabase = new PictureBox();
             PanelLogin = new Panel();
-            txtNews = new TextBox();
             btnSeePassword = new PictureBox();
-            LinkLabelEmail = new LinkLabel();
-            LinkLabelWebContact = new LinkLabel();
-            LinkLabelWhatsApp = new LinkLabel();
-            btnAmpliar = new PictureBox();
             btnLogin = new PictureBox();
             txtEmail = new TextBox();
             txtLoginPassword = new TextBox();
@@ -221,7 +216,6 @@ namespace FiyiStackDeskApp.Forms
             ((System.ComponentModel.ISupportInitialize)btnDatabaseSaveDatabase).BeginInit();
             PanelLogin.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnSeePassword).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)btnAmpliar).BeginInit();
             ((System.ComponentModel.ISupportInitialize)btnLogin).BeginInit();
             PanelProject.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)btnShowGeneratorPanel).BeginInit();
@@ -1838,12 +1832,7 @@ namespace FiyiStackDeskApp.Forms
             // PanelLogin
             // 
             PanelLogin.BackgroundImage = (Image)resources.GetObject("PanelLogin.BackgroundImage");
-            PanelLogin.Controls.Add(txtNews);
             PanelLogin.Controls.Add(btnSeePassword);
-            PanelLogin.Controls.Add(LinkLabelEmail);
-            PanelLogin.Controls.Add(LinkLabelWebContact);
-            PanelLogin.Controls.Add(LinkLabelWhatsApp);
-            PanelLogin.Controls.Add(btnAmpliar);
             PanelLogin.Controls.Add(btnLogin);
             PanelLogin.Controls.Add(txtEmail);
             PanelLogin.Controls.Add(txtLoginPassword);
@@ -1851,21 +1840,6 @@ namespace FiyiStackDeskApp.Forms
             PanelLogin.Name = "PanelLogin";
             PanelLogin.Size = new Size(1857, 1004);
             PanelLogin.TabIndex = 17;
-            // 
-            // txtNews
-            // 
-            txtNews.BackColor = Color.FromArgb(32, 38, 44);
-            txtNews.BorderStyle = BorderStyle.None;
-            txtNews.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtNews.ForeColor = Color.FromArgb(255, 255, 255);
-            txtNews.Location = new Point(469, 227);
-            txtNews.MaxLength = 100;
-            txtNews.Multiline = true;
-            txtNews.Name = "txtNews";
-            txtNews.ReadOnly = true;
-            txtNews.Size = new Size(232, 330);
-            txtNews.TabIndex = 21;
-            txtNews.Text = "[txtNews]";
             // 
             // btnSeePassword
             // 
@@ -1879,57 +1853,6 @@ namespace FiyiStackDeskApp.Forms
             btnSeePassword.TabStop = false;
             btnSeePassword.MouseDown += btnSee_MouseDown;
             btnSeePassword.MouseUp += btnSee_MouseUp;
-            // 
-            // LinkLabelEmail
-            // 
-            LinkLabelEmail.AutoSize = true;
-            LinkLabelEmail.Font = new Font("Microsoft YaHei UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabelEmail.LinkColor = Color.FromArgb(224, 224, 224);
-            LinkLabelEmail.Location = new Point(1574, 446);
-            LinkLabelEmail.Name = "LinkLabelEmail";
-            LinkLabelEmail.Size = new Size(150, 24);
-            LinkLabelEmail.TabIndex = 20;
-            LinkLabelEmail.TabStop = true;
-            LinkLabelEmail.Text = "[LinkLabelEmail]";
-            LinkLabelEmail.LinkClicked += LinkLabelEmail_LinkClicked;
-            // 
-            // LinkLabelWebContact
-            // 
-            LinkLabelWebContact.AutoSize = true;
-            LinkLabelWebContact.Font = new Font("Microsoft YaHei UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabelWebContact.LinkColor = Color.FromArgb(224, 224, 224);
-            LinkLabelWebContact.Location = new Point(1574, 373);
-            LinkLabelWebContact.Name = "LinkLabelWebContact";
-            LinkLabelWebContact.Size = new Size(210, 24);
-            LinkLabelWebContact.TabIndex = 19;
-            LinkLabelWebContact.TabStop = true;
-            LinkLabelWebContact.Text = "[LinkLabelWebContact]";
-            LinkLabelWebContact.LinkClicked += LinkLabelWebContact_LinkClicked;
-            // 
-            // LinkLabelWhatsApp
-            // 
-            LinkLabelWhatsApp.AutoSize = true;
-            LinkLabelWhatsApp.Font = new Font("Microsoft YaHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LinkLabelWhatsApp.LinkColor = Color.FromArgb(224, 224, 224);
-            LinkLabelWhatsApp.Location = new Point(1574, 300);
-            LinkLabelWhatsApp.Name = "LinkLabelWhatsApp";
-            LinkLabelWhatsApp.Size = new Size(213, 27);
-            LinkLabelWhatsApp.TabIndex = 18;
-            LinkLabelWhatsApp.TabStop = true;
-            LinkLabelWhatsApp.Text = "[LinkLabelWhatsApp]";
-            LinkLabelWhatsApp.LinkClicked += LinkLabelWhatsApp_LinkClicked;
-            // 
-            // btnAmpliar
-            // 
-            btnAmpliar.Cursor = Cursors.Hand;
-            btnAmpliar.Image = Properties.Resources.btnAmpliar;
-            btnAmpliar.Location = new Point(442, 581);
-            btnAmpliar.Name = "btnAmpliar";
-            btnAmpliar.Size = new Size(290, 88);
-            btnAmpliar.SizeMode = PictureBoxSizeMode.StretchImage;
-            btnAmpliar.TabIndex = 17;
-            btnAmpliar.TabStop = false;
-            btnAmpliar.Click += btnAmpliar_Click;
             // 
             // btnLogin
             // 
@@ -2261,7 +2184,6 @@ namespace FiyiStackDeskApp.Forms
             PanelLogin.ResumeLayout(false);
             PanelLogin.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)btnSeePassword).EndInit();
-            ((System.ComponentModel.ISupportInitialize)btnAmpliar).EndInit();
             ((System.ComponentModel.ISupportInitialize)btnLogin).EndInit();
             PanelProject.ResumeLayout(false);
             PanelProject.PerformLayout();
@@ -2370,10 +2292,6 @@ namespace FiyiStackDeskApp.Forms
         private ToolStripMenuItem cerrarSesionToolStripMenuItem;
         private PictureBox btnSave;
         private Panel PanelLogin;
-        private LinkLabel LinkLabelEmail;
-        private LinkLabel LinkLabelWebContact;
-        private LinkLabel LinkLabelWhatsApp;
-        private PictureBox btnAmpliar;
         private PictureBox btnLogin;
         private TextBox txtEmail;
         private TextBox txtLoginPassword;
@@ -2420,7 +2338,6 @@ namespace FiyiStackDeskApp.Forms
         private Label label31;
         private Label label19;
         private ComboBox cmbConfigurationType;
-        private TextBox txtNews;
         private TextBox txtForeignColumnName;
         private Label label32;
     }

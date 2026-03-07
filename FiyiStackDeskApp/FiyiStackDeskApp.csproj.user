@@ -7,9 +7,6 @@
     <Compile Update="Forms\GeneratorForms\G1ConfigurationForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\LoginForms\ExpandNoticeOrInformation.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

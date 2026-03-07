@@ -8,14 +8,10 @@ using FiyiStackDeskApp.Areas.FiyiStackDeskApp.FieldBack.Interfaces;
 using FiyiStackDeskApp.Areas.FiyiStackDeskApp.FieldBack.Repositories;
 using FiyiStackDeskApp.Areas.FiyiStackDeskApp.G1ConfigurationBack.Interfaces;
 using FiyiStackDeskApp.Areas.FiyiStackDeskApp.G1ConfigurationBack.Repositories;
-using FiyiStackDeskApp.Areas.FiyiStackDeskApp.NewsInLoginPageBack.Interfaces;
-using FiyiStackDeskApp.Areas.FiyiStackDeskApp.NewsInLoginPageBack.Repositories;
 using FiyiStackDeskApp.Areas.FiyiStackDeskApp.ProjectBack.Interfaces;
 using FiyiStackDeskApp.Areas.FiyiStackDeskApp.ProjectBack.Repositories;
 using FiyiStackDeskApp.Areas.FiyiStackDeskApp.TableBack.Interfaces;
 using FiyiStackDeskApp.Areas.FiyiStackDeskApp.TableBack.Repositories;
-using FiyiStackDeskApp.Areas.FiyiStackDeskApp.VersionControlBack.Interfaces;
-using FiyiStackDeskApp.Areas.FiyiStackDeskApp.VersionControlBack.Repositories;
 using FiyiStackDeskApp.Areas.System.FailureBack.Interfaces;
 using FiyiStackDeskApp.Areas.System.FailureBack.Repositories;
 using FiyiStackDeskApp.DatabaseContexts;
@@ -65,8 +61,6 @@ namespace FiyiStackDeskApp
             services.AddScoped<IDataBaseRepository, DataBaseRepository>();
             services.AddScoped<ITableRepository, TableRepository>();
             services.AddScoped<IFieldRepository, FieldRepository>();
-            services.AddScoped<IVersionControlRepository, VersionControlRepository>();
-            services.AddScoped<INewsInLoginPageRepository, NewsInLoginPageRepository>();
 
             //CONFIGURATIONS
             services.AddScoped<IG1ConfigurationRepository, G1ConfigurationRepository>();

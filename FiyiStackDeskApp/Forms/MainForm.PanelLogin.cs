@@ -1,5 +1,4 @@
 ﻿using FiyiStackDeskApp.Areas.CMS.UserBack.Entities;
-using FiyiStackDeskApp.Areas.FiyiStackDeskApp.NewsInLoginPageBack.Entities;
 using System.Diagnostics;
 
 namespace FiyiStackDeskApp.Forms
@@ -23,16 +22,10 @@ namespace FiyiStackDeskApp.Forms
                 cambiarDatosDeUsuarioToolStripMenuItem.Visible = false;
                 cerrarSesionToolStripMenuItem.Visible = false;
 
-                txtEmail.Text = "novillo.matias1@gmail.com";
-                txtLoginPassword.Text = "z";
+                txtEmail.Text = "";
+                txtLoginPassword.Text = "";
                 txtEmail.TabIndex = 0;
                 txtLoginPassword.TabIndex = 1;
-
-                //Get news
-                NewsInLoginPage NewsInLoginPage = _newsInLoginPageRepository.GetLastNews();
-
-                txtNews.Text = NewsInLoginPage.New;
-
             }
             catch (Exception ex)
             {
@@ -164,12 +157,6 @@ namespace FiyiStackDeskApp.Forms
                 FileName = mailto,
                 UseShellExecute = true
             });
-        }
-
-        private void btnAmpliar_Click(object sender, EventArgs e)
-        {
-            LoginForms.ExpandNoticeOrInformation ExpandNoticeOrInformation = new(_serviceProvider);
-            ExpandNoticeOrInformation.ShowDialog();
         }
     }
 }

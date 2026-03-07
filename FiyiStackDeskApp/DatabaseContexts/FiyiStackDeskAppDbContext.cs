@@ -15,10 +15,6 @@ using FiyiStackDeskApp.Areas.FiyiStackDeskApp.TableBack.EntitiesConfiguration;
 using FiyiStackDeskApp.Areas.System.FailureBack.Entities;
 using FiyiStackDeskApp.Areas.System.FailureBack.EntitiesConfiguration;
 using Microsoft.EntityFrameworkCore;
-using FiyiStackDeskApp.Areas.FiyiStackDeskApp.VersionControlBack.Entities;
-using FiyiStackDeskApp.Areas.FiyiStackDeskApp.VersionControlBack.EntitiesConfiguration;
-using FiyiStackDeskApp.Areas.FiyiStackDeskApp.NewsInLoginPageBack.Entities;
-using FiyiStackDeskApp.Areas.FiyiStackDeskApp.NewsInLoginPageBack.EntitiesConfiguration;
 
 namespace FiyiStackDeskApp.DatabaseContexts
 {
@@ -36,8 +32,6 @@ namespace FiyiStackDeskApp.DatabaseContexts
         public DbSet<DataBase> DataBase { get; set; }
         public DbSet<Table> Table { get; set; }
         public DbSet<Field> Field { get; set; }
-        public DbSet<VersionControl> VersionControl { get; set; }
-        public DbSet<NewsInLoginPage> NewsInLoginPage { get; set; }
 
         public DbSet<G1Configuration> G1Configuration { get; set; }
 
@@ -68,10 +62,6 @@ namespace FiyiStackDeskApp.DatabaseContexts
                 modelBuilder.Entity<Table>().ToTable("FiyiStackDeskApp.Table");
                 modelBuilder.ApplyConfiguration(new FieldConfiguration());
                 modelBuilder.Entity<Field>().ToTable("FiyiStackDeskApp.Field");
-                modelBuilder.ApplyConfiguration(new VersionControlConfiguration());
-                modelBuilder.Entity<VersionControl>().ToTable("FiyiStackDeskApp.VersionControl");
-                modelBuilder.ApplyConfiguration(new NewsInLoginPageConfiguration());
-                modelBuilder.Entity<NewsInLoginPage>().ToTable("FiyiStackDeskApp.NewsInLoginPage");
 
                 modelBuilder.ApplyConfiguration(new G1ConfigurationConfiguration());
                 modelBuilder.Entity<G1Configuration>().ToTable("FiyiStackDeskApp.G1Configuration");

@@ -35,7 +35,7 @@ Follow these steps to run the application locally:
 1. Clone the repository  
    ```bash
    git clone https://github.com/fiyistack/FiyiStackDeskApp.git
-2. Do a backup of the database FiyiStackDeskApp.bak with Microsoft SQL Server Studio or another similar.
+2. Do a backup of the database FiyiStackDeskApp.bak with Microsoft SQL Server Management Studio or another similar.
 4. Execute the file FiyiStackDeskApp.sln with Visual Studio.
 5. Restore NuGet packages.
 6. If you want to debug, put a breakpoint in the startup file, Program.cs

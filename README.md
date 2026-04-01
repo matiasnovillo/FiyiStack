@@ -16,17 +16,6 @@ If a typical application requires 10,000 lines of code, FiyiStackDeskApp generat
 - Export data to PDF, Excel, and CSV formats.
 - Import data from an Excel file.
 - Bulk actions for copying and deleting.
-
-## 🗂 Repository Structure
-FiyiStackDeskApp
-├── .gitignore
-├── FiyiStackDeskApp.sln
-├── LICENSE
-├── FiyiStackDeskApp
-    ├── (project source code)
-    └── DatabaseBackup/
-        ├── FiyiStackDeskApp.bak
-        └── CommonFunctions.sql
         
 ## 🚀 How to build and run
 
@@ -47,4 +36,4 @@ Follow these steps to run the application locally:
 12. Generate
 
 ## Generators in operation:
-G1, generates in: .NET ecosystem, C#, Blazor, MS SQL Server, EF Core, DI, Repository pattern, DDD, Bootstrap, Js, CSS, HTML
+G1, generates with the next technologies: .NET ecosystem, C#, Blazor, MS SQL Server, EF Core, DI, Repository pattern, Bootstrap, Js, CSS, HTML

@@ -42,7 +42,7 @@
                     </h3>
                     <div class=""d-flex gap-2"">
                         <NavLink class=""btn btn-outline-dark btn-sm text-nowrap"" 
-                        href=""Dashboard"">
+                        href=""/cms/panel-de-control"">
                             <span class=""fas fa-chevron-left"" aria-hidden=""true""></span>
                             &nbsp;Volver
                         </NavLink>

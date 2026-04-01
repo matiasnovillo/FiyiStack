@@ -1474,7 +1474,7 @@ $@"//{field.Name}
 
                         if (field.Name != "UserCreationId" && field.Name != "UserLastModificationId")
                         {
-                            ModalsInBlazorPageNonQuery = $@"<!-- Modal for {field.Name}-->
+                            ModalsInBlazorPageNonQuery += $@"<!-- Modal for {field.Name}-->
     <div class=""modal fade"" 
         id=""{field.Name.ToLower()}modal"" 
         tabindex=""-1"" 

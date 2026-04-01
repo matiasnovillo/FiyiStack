@@ -1,50 +1,36 @@
-# FiyiStackDeskApp
+# FiyiStack
 
-**Low-code generator / desktop base application**
+**Un generador de código low-code, un potente scaffolder y un catalizador de código**
 
-## 📄 Overview
+## 📄 Descripción general
 
-FiyiStackDeskApp is a desktop application built in C#/.NET designed as a low-code generator: a base environment that allows you to quickly create and extend web and desktop solutions with minimal effort.
+FiyiStack es una aplicación de escritorio desarrollada en C#/.NET y WindowsForms, diseñada como un generador y catalizador low-code: un entorno base que permite crear y ampliar rápidamente soluciones web y de escritorio con un mínimo esfuerzo.
 
-FiyiStackDeskApp lets you quickly create CRUD applications by entering an ERD into this system. This low-code generator and catalyst allows you to create the web and desktop views to manipulate a database table.
+FiyiStack permite crear rápidamente aplicaciones CRUD introduciendo un diagrama entidad-relación (DER) en el sistema. Este generador y catalizador de código permite crear las vistas web y de escritorio para manipular tablas de bases de datos.
 
-If a typical application requires 10,000 lines of code, FiyiStackDeskApp generates 7,000. For each table in a database, FiyiStackDeskApp generates at least 5,000 lines of code to make your CRUD application functional.
+Si una aplicación típica requiere 10.000 líneas de código, FiyiStack genera entre 6.000 a 7.000. Por cada tabla de la base de datos, FiyiStack genera al menos 5.000 líneas de código para que el CRUD sea funcional.
 
-## 📄 CRUD Functionalities:
-- Add and modify data, provided it passes the tests available in the entity.
-- Display data in table or chart format.
-- Export data to PDF, Excel, and CSV formats.
-- Import data from an Excel file.
-- Bulk actions for copying and deleting.
-
-## 🗂 Repository Structure
-FiyiStackDeskApp
-├── .gitignore
-├── FiyiStackDeskApp.sln
-├── LICENSE
-├── FiyiStackDeskApp
-    ├── (project source code)
-    └── DatabaseBackup/
-        ├── FiyiStackDeskApp.bak
-        └── CommonFunctions.sql
+## 📄 Funcionalidades de los CRUDs generados:
+- Agregar y modificar datos, siempre que superen las pruebas disponibles en la entidad.
+- Visualizar datos en formato de tabla o cartas (para dispositivos pequeños).
+- Exportar datos a formatos PDF, Excel y CSV.
+- Importar datos desde un archivo de Excel.
+- Realizar acciones masivas para copiar y eliminar.
         
-## 🚀 How to build and run
+## 🚀 Pasos para usarlo
 
-Follow these steps to run the application locally:
+Siga estos pasos para ejecutar la aplicación localmente:
+1. Clona el repositorio.
+2. Realiza una copia de seguridad de la base de datos FiyiStackDeskApp.bak con Microsoft SQL Server Management Studio u otro programa similar.
+4. Ejecuta el archivo FiyiStackDeskApp.sln con Visual Studio.
+5. Restaura los paquetes NuGet.
+6. Si deseas depurar, coloca un punto de interrupción en el archivo de inicio, Program.cs.
+7. Introduce mis credenciales: USUARIO: novillo.matias1@gmail.com, CONTRASEÑA: z
+8. Crea un nuevo proyecto colocando nombre, path del proyecto a generar y seleccionar tipo de generador.
+9. Restaura las funciones comunes de SQL desde la carpeta DatabaseBackup/. Estas funciones permiten conectar FiyiStack con la BD de tu aplicación
+11. Crea una conexión a la base de datos.
+12. Crea una tabla dentro de esa base de datos.
+13. Genera
 
-1. Clone the repository  
-   ```bash
-   git clone https://github.com/fiyistack/FiyiStackDeskApp.git
-2. Do a backup of the database FiyiStackDeskApp.bak with Microsoft SQL Server Studio or another similar.
-4. Execute the file FiyiStackDeskApp.sln with Visual Studio.
-5. Restore NuGet packages.
-6. If you want to debug, put a breakpoint in the startup file, Program.cs
-7. Put my credentials to use it: USER: novillo.matias1@gmail.com, PASSWORD: z
-8. Create a new project
-9. Restore SQL Common Functions from DatabaseBackup/ folder
-10. Create a DB connection
-11. Create a table inside that DB
-12. Generate
-
-## Generators in operation:
-G1, generates in: .NET ecosystem, C#, Blazor, MS SQL Server, EF Core, DI, Repository pattern, DDD, Bootstrap, Js, CSS, HTML
+## Generadores en operación:
+G1, genera con las siguientes tecnologías: .NET, C#, Blazor, MS SQL Server, EF Core, DI, patrón repositorio, Bootstrap, Js, CSS, HTML

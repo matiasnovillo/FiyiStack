@@ -120,7 +120,9 @@ namespace FiyiStackDeskApp.Generators.G1
                 {
                     case 0:
                         throw new Exception("You must choose a Data Type");
-                    case 3: //Integer/Long
+                    //LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG
+                    //LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG//LONG
+                    case 3: //Long
 
                         
 
@@ -243,6 +245,8 @@ $@"//{field.Name}
                         }
 
                         break;
+                    //BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN
+                    //BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN//BOOLEAN
                     case 4: //Boolean
 
                         if (field.Name != "Active")
@@ -332,6 +336,8 @@ $@"//{field.Name}
                         }
 
                         break;
+                    //TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC
+                    //TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC//TEXT-BASIC
                     case 5: //Text: Basic
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -406,6 +412,8 @@ $@"//{field.Name}
                     ";
 
                         break;
+                    //DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL
+                    //DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL//DECIMAL
                     case 6: //Decimal
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -491,6 +499,8 @@ $@"//{field.Name}
                     ";
 
                         break;
+                    //PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK
+                    //PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK//PK
                     case 8: //Primary Key (Id)
 
                         PropertiesInHTML_TH_ForBlazorPageQuery += $@"<th>ID</th>
@@ -508,6 +518,8 @@ $@"[Key]
                                         ";
 
                         break;
+                    //DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME
+                    //DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME
                     case 10: //DateTime
 
                         
@@ -597,11 +609,13 @@ $@"//{field.Name}
             ";
 
                             PropertiesForEntity +=
-$@"        [DateTimeRange(required: true, minimumDate: ""0001-01-01T00:00:00.0000000"", maximumDate: ""9999-12-31T23:59:59.9999999"")]
+$@"        [DateTimeRange(required: true, minimumDate: ""1753-01-01T12:00"", maximumDate: ""9998-12-30T23:59"")]
         public DateTime {field.Name} {{ get; set; }}
 ";
                         }
                         break;
+                    //TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN
+                    //TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN//TIMESPAN
                     case 11: //TimeSpan
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -677,10 +691,13 @@ $@"//{field.Name}
                     ";
 
                         break;
+                    //FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK
+                    //FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK
                     case 13: //Foreign Key (Id): Options
 
                         throw new Exception("The Foreign Key (Id) Options property is not allowed in this generator");
-
+                    //HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR
+                    //HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR//HEXCOLOUR
                     case 14: //Text: HexColour
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -717,8 +734,8 @@ $@"//{field.Name}
                         iForImportInService += 1;
 
                         PropertiesForEntity +=
-$@"        [String(required: {(field.Nullable == true ? "false" : "true")}, minimumLength: ""6"", maximumLength: ""6"", pattern: """")]
-        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}
+$@"        [String(required: {(field.Nullable == true ? "false" : "true")}, minimumLength: 6, maximumLength: 6, pattern: """")]
+        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}{(field.Nullable == true ? "" : " = string.Empty;")}
 ";
 
                         PropertiesForEntityConfiguration +=
@@ -764,6 +781,8 @@ $@"//{field.Name}
                     ";
 
                         break;
+                    //TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA
+                    //TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA//TEXTAREA
                     case 15: //Text: TextArea
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -839,6 +858,8 @@ $@"//{field.Name}
                     ";
 
                         break;
+                    //TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR
+                    //TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR//TEXTEDITOR
                     case 16: //Text: TextEditor 
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -875,8 +896,8 @@ $@"//{field.Name}
                         iForImportInService += 1;
 
                         PropertiesForEntity +=
-$@"        [String(required: {(field.Nullable == true ? "false" : "true")}, minimumLength: ""{field.MinValue}"", maximumLength: ""{field.MaxValue}"", pattern: """")]
-        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}
+$@"        [String(required: {(field.Nullable == true ? "false" : "true")}, minimumLength: {field.MinValue}, maximumLength: {field.MaxValue}, pattern: """")]
+        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}{(field.Nullable == true ? "" : " = string.Empty;")}
 ";
 
                         PropertiesForEntityConfiguration +=
@@ -965,6 +986,8 @@ $@"//{field.Name}
                     ";
 
                         break;
+                    //PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD
+                    //PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD//PASSWORD
                     case 17: //Text: Password
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -1039,6 +1062,8 @@ $@"//{field.Name}
                     ";
 
                         break;
+                    //PHONENUMBER//PHONENUMBER//PHONENUMBER//PHONENUMBER//PHONENUMBER//PHONENUMBER//PHONENUMBER//PHONENUMBER
+                    //PHONENUMBER//PHONENUMBER//PHONENUMBER//PHONENUMBER//PHONENUMBER//PHONENUMBER//PHONENUMBER//PHONENUMBER
                     case 18: //Text: PhoneNumber
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -1076,7 +1101,7 @@ $@"//{field.Name}
 
                         PropertiesForEntity +=
 $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, minimumLength: {field.MinValue}, maximumLength: {field.MaxValue}, pattern: ""{field.Regex}"")]
-        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}
+        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}{(field.Nullable == true ? "" : " = string.Empty;")}
 ";
 
                         PropertiesForEntityConfiguration +=
@@ -1124,6 +1149,8 @@ $@"//{field.Name}
                     ";
 
                         break;
+                    //URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL
+                    //URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL//URL
                     case 19: //Text: URL
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -1161,7 +1188,7 @@ $@"//{field.Name}
 
                         PropertiesForEntity +=
 $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, minimumLength: {field.MinValue}, maximumLength: {field.MaxValue}, pattern: ""{field.Regex}"")]
-        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}
+        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}{(field.Nullable == true ? "" : " = string.Empty;")}
 ";
 
                         PropertiesForEntityConfiguration +=
@@ -1211,6 +1238,8 @@ $@"//{field.Name}
                     ";
 
                         break;
+                    //EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL
+                    //EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL//EMAIL
                     case 20: //Text: Email
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -1296,6 +1325,8 @@ $@"//{field.Name}
                     ";
 
                         break;
+                    //FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE
+                    //FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE//FILE
                     case 21: //Text: File
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -1333,7 +1364,7 @@ $@"//{field.Name}
 
                         PropertiesForEntity +=
 $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, minimumLength: {field.MinValue}, maximumLength: {field.MaxValue}, pattern: ""{field.Regex}"")]
-        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}
+        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}{(field.Nullable == true ? "" : " = string.Empty;")}
 ";
 
                         PropertiesForEntityConfiguration +=
@@ -1435,6 +1466,8 @@ $@"//{field.Name}
     ";
 
                         break;
+                    //TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG
+                    //TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG//TAG
                     case 22: //Text: Tag
 
                         Handlers_InNonQueryBlazor += $@"private async Task Handle{field.Name}Change(ChangeEventArgs e)
@@ -1472,7 +1505,7 @@ $@"//{field.Name}
 
                         PropertiesForEntity +=
 $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, minimumLength: {field.MinValue}, maximumLength: {field.MaxValue}, pattern: ""{field.Regex}"")]
-        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}
+        public string{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}{(field.Nullable == true ? "" : " = string.Empty;")}
 ";
 
                         PropertiesForEntityConfiguration +=
@@ -1510,6 +1543,8 @@ $@"//{field.Name}
                     ";
 
                         break;
+                    //FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK
+                    //FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK//FK
                     case 23: //Foreign Key (Id): DropDown
 
                         PropertiesForEntityConfiguration +=

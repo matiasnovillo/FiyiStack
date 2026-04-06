@@ -19,20 +19,15 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
     {{
         public void Configure(EntityTypeBuilder<{Table.Name}> entity)
         {{
-            try
-            {{
-                //{Table.Name}Id
-                entity.HasKey(e => e.{Table.Name}Id);
-                entity.Property(e => e.{Table.Name}Id)
-                    .ValueGeneratedOnAdd();
+            //{Table.Name}Id
+            entity.HasKey(e => e.{Table.Name}Id);
+            entity.Property(e => e.{Table.Name}Id)
+                .ValueGeneratedOnAdd();
 
-                {GeneratorConfigurationComponent.G1FieldChainer.PropertiesForEntityConfiguration}
-            }}
-            catch (Exception) {{ throw; }}
+            {GeneratorConfigurationComponent.G1FieldChainer.PropertiesForEntityConfiguration}
         }}
     }}
-}}
-";
+}}";
 
                 return Content;
             }

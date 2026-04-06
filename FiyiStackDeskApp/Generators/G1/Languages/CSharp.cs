@@ -36,9 +36,9 @@ namespace FiyiStackDeskApp.Generators.G1.Languages
                         Content = Modules.CSharp.CSharp.DTO(g1ConfigurationComponent, Table);
 
                         SharedComponent.CreateFile(
-                        $"{DTOPath}paginated{Table.Name}DTO.cs",
-                        Content,
-                        g1ConfigurationComponent.G1Configuration.DeleteFiles);
+                        $"{DTOPath}Paginated{Table.Name}DTO.cs",
+                        Content);
+
                     }
                     #endregion
 
@@ -60,8 +60,8 @@ namespace FiyiStackDeskApp.Generators.G1.Languages
 
                         SharedComponent.CreateFile(
                         $"{EntityPath}{Table.Name}.cs",
-                        Content,
-                        g1ConfigurationComponent.G1Configuration.DeleteFiles);
+                        Content);
+
                     }
                     #endregion
 
@@ -83,8 +83,8 @@ namespace FiyiStackDeskApp.Generators.G1.Languages
 
                         SharedComponent.CreateFile(
                         $"{InterfacePath}I{Table.Name}Repository.cs",
-                        Content,
-                        g1ConfigurationComponent.G1Configuration.DeleteFiles);
+                        Content);
+
                     }
                     #endregion
 
@@ -106,8 +106,8 @@ namespace FiyiStackDeskApp.Generators.G1.Languages
 
                         SharedComponent.CreateFile(
                         $"{InterfacePath}I{Table.Name}ExportationService.cs",
-                        Content,
-                        g1ConfigurationComponent.G1Configuration.DeleteFiles);
+                        Content);
+
                     }
 
                     if (g1ConfigurationComponent.G1Configuration.WantInterfaces)
@@ -127,8 +127,8 @@ namespace FiyiStackDeskApp.Generators.G1.Languages
 
                         SharedComponent.CreateFile(
                         $"{InterfacePath}I{Table.Name}ImportationService.cs",
-                        Content,
-                        g1ConfigurationComponent.G1Configuration.DeleteFiles);
+                        Content);
+
                     }
                     #endregion
 
@@ -150,8 +150,8 @@ namespace FiyiStackDeskApp.Generators.G1.Languages
 
                         SharedComponent.CreateFile(
                         $"{RepositoryPath}{Table.Name}Repository.cs",
-                        Content,
-                        g1ConfigurationComponent.G1Configuration.DeleteFiles);
+                        Content);
+
                     }
                     #endregion
 
@@ -173,8 +173,8 @@ namespace FiyiStackDeskApp.Generators.G1.Languages
 
                         SharedComponent.CreateFile(
                         $"{ServicePath}{Table.Name}ExportationService.cs",
-                        Content,
-                        g1ConfigurationComponent.G1Configuration.DeleteFiles);
+                        Content);
+
                     }
 
                     if (g1ConfigurationComponent.G1Configuration.WantService)
@@ -194,8 +194,8 @@ namespace FiyiStackDeskApp.Generators.G1.Languages
 
                         SharedComponent.CreateFile(
                         $"{ServicePath}{Table.Name}ImportationService.cs",
-                        Content,
-                        g1ConfigurationComponent.G1Configuration.DeleteFiles);
+                        Content);
+
                     }
                     #endregion
 
@@ -217,8 +217,8 @@ namespace FiyiStackDeskApp.Generators.G1.Languages
 
                         SharedComponent.CreateFile(
                         $"{RepositoryPath}{Table.Name}Configuration.cs",
-                        Content,
-                        g1ConfigurationComponent.G1Configuration.DeleteFiles);
+                        Content);
+
                     }
                     #endregion
 
@@ -240,8 +240,8 @@ namespace FiyiStackDeskApp.Generators.G1.Languages
 
                         SharedComponent.CreateFile(
                         $"{BlazorPagePath}{Table.Name}QueryPage.razor",
-                        Content,
-                        g1ConfigurationComponent.G1Configuration.DeleteFiles);
+                        Content);
+
                     }
                     #endregion
 
@@ -263,8 +263,8 @@ namespace FiyiStackDeskApp.Generators.G1.Languages
 
                         SharedComponent.CreateFile(
                         $"{BlazorPagePath}{Table.Name}NonQueryPage.razor",
-                        Content,
-                        g1ConfigurationComponent.G1Configuration.DeleteFiles);
+                        Content);
+                        
                     }
                     #endregion
                 }

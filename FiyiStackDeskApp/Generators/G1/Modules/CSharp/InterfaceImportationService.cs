@@ -21,7 +21,7 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
 
                 return Content;
             }
-            catch (Exception ex) { throw ex; }
+            catch (Exception) { throw; }
         }
     }
 }

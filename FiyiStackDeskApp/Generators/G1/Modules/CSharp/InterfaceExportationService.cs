@@ -16,11 +16,11 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
 {{
     public interface I{Table.Name}ExportationService
     {{
-        void ExportToExcel(string path, DataTable dt{Table.Name});
+        void ExportToExcel(string path, DataTable DataTable{Table.Name});
 
-        void ExportToCSV(string path, List<{Table.Name}> lst{Table.Name});
+        void ExportToCSV(string path, List<{Table.Name}> List{Table.Name});
 
-        void ExportToPDF(string path, List<{Table.Name}> lst{Table.Name});
+        void ExportToPDF(string path, List<{Table.Name}> List{Table.Name});
     }}
 }}";
 

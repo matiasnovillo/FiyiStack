@@ -30,7 +30,7 @@ else
     <PageTitle>Editar {Table.Name.ToLower()} - {Table.Area}</PageTitle>
 }}
 
-<{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._SideNavForDashboard lstFoldersAndPagesForSideNavDTO=""lstFoldersAndPagesForSideNavDTO""></{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._SideNavForDashboard>
+<{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._SideNavForDashboard lstFoldersAndPagesForSideNavDTO=""ListFoldersAndPagesForSideNavDTO""></{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._SideNavForDashboard>
 
 <div class=""main-content position-relative max-height-vh-100 h-100"">
     <{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._NavBarForDashboard Pagina=""{Table.Name}""></{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._NavBarForDashboard>
@@ -112,7 +112,7 @@ else
     //PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIESPROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES
 
     #region Properties
-    private List<folderAndPagesForCMSDTO> lstFoldersAndPagesForSideNavDTO = [];
+    private List<FolderAndPagesForCMSDTO> ListFoldersAndPagesForSideNavDTO = [];
 
     [Parameter]
     public int {Table.Name}Id {{ get; set; }}
@@ -146,9 +146,9 @@ else
             {{
                 await base.GetUserIdFromCookies();
 
-                await base.IsUserAvailableToUseThisPage(""/CMS/{Table.Area}/{Table.Name}QueryPage"");
+                await base.IsUserAvailableToUseThisPage(""/CMS/{Table.Area}/{Table.Name}querypage"");
 
-                lstFoldersAndPagesForSideNavDTO = await rolemenuRepository
+                ListFoldersAndPagesForSideNavDTO = await rolemenuRepository
                     .GetAllPagesAndFoldersForCMSByRoleIdAsync(base.User!.RoleId);
 
                 //FOREIGN LISTS (TABLES)
@@ -322,9 +322,7 @@ else
     #region Handlers
     {GeneratorConfigurationComponent.G1FieldChainer.Handlers_InNonQueryBlazor}
     #endregion
-}}
-
-";
+}}";
 
                 return Content;
             }

@@ -18,50 +18,47 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
     public interface I{Table.Name}Repository
     {{
         #region Async Queries
-        Task<IQueryable<{Table.Name}>> AsQueryableAsync();
-
         Task<int> CountAsync();
 
         Task<{Table.Name}?> GetOneBy{Table.Name}IdAsync(long {Table.Name.ToLower()}Id);
 
         Task<List<{Table.Name}>> GetAllAsync();
 
-        Task<List<{Table.Name}>> GetAllBy{Table.Name}IdCheckedAsync(List<long> lstLONG{Table.Name}IdChecked);
+        Task<List<{Table.Name}>> GetAllBy{Table.Name}IdCheckedAsync(List<long> ListChecked{Table.Name}Ids);
 
         Task<List<{Table.Name}>> GetAllBy{Table.Name}IdForModalAsync(string textToSearch);
 
-        Task<paginated{Table.Name}DTO> GetAllBy{Table.Name}IdPaginatedAsync(string textToSearch,
+        Task<Paginated{Table.Name}DTO> GetAllBy{Table.Name}IdPaginatedAsync(string textToSearch,
             bool strictSearch,
             int pageIndex,
             int pageSize);
         #endregion
 
         #region Async Non-Queries
-        Task<bool> AddAsync({Table.Name} {Table.Name.ToLower()});
+        Task<int> AddAsync({Table.Name} {Table.Name.ToLower()});
 
-        Task<bool> AddRangeAsync(List<{Table.Name}> lst{Table.Name});
+        Task<int> AddRangeAsync(List<{Table.Name}> List{Table.Name});
 
-        Task<bool> UpdateAsync({Table.Name} {Table.Name.ToLower()});
+        Task<int> UpdateAsync({Table.Name} {Table.Name.ToLower()});
 
-        Task<bool> DeleteOneBy{Table.Name}IdAsync(long {Table.Name.ToLower()}Id);
+        Task<int> DeleteOneBy{Table.Name}IdAsync(long {Table.Name.ToLower()}Id);
 
-        Task<bool> DeleteAll{Table.Name}Async();
+        Task<int> DeleteAllAsync();
 
-        Task<bool> DeleteManyBy{Table.Name}IdAsync(List<{Table.Name}> lst{Table.Name});
+        Task<int> DeleteManyAsync(List<{Table.Name}> List{Table.Name});
         #endregion
 
         #region Methods for DataTable
-        Task<DataTable> GetAllBy{Table.Name}IdInDataTableAsync(List<long> lstLONG{Table.Name}IdChecked);
+        Task<DataTable> GetAllBy{Table.Name}IdInDataTableAsync(List<long> ListChecked{Table.Name}Ids);
 
         Task<DataTable> GetAllInDataTableAsync();
         #endregion
     }}
-}}
-";
+}}";
 
                 return Content;
             }
-            catch (Exception ex) { throw ex; }
+            catch (Exception) { throw; }
         }
     }
 }

@@ -118,63 +118,9 @@ namespace FiyiStackDeskApp
             catch (Exception) { throw; }
         }
 
-        public static void CreateFile(string filePath, string content, bool deleteFile)
+        public static void CreateFile(string filePath, string content)
         {
-            try
-            {
-                if (File.Exists(filePath))
-                {
-                    //EDIT THE FILE
-                    if (deleteFile)
-                    {
-                        //Take all the information of the file and convert it to a string
-                        string ContentOfFile = "";
-
-                        using (FileStream filestream = new(filePath, FileMode.Open, FileAccess.Read))
-                        {
-                            //Convert the source file into a byte array
-                            byte[] byteArray = new byte[filestream.Length];
-
-                            int NumberOfBytesToRead = (int)filestream.Length;
-
-                            int NumberOfBytesRead = 0;
-
-                            while (NumberOfBytesToRead > 0)
-                            {
-                                //Read may return anything from 0 to NumberOfBytesToRead.
-                                int TotalBytesRead = filestream.Read(byteArray, NumberOfBytesRead, NumberOfBytesToRead);
-                                if (TotalBytesRead == 0)
-                                {
-                                    //Break when the end of the file is reached.
-                                    break;
-                                }
-
-                                NumberOfBytesRead += TotalBytesRead;
-                                NumberOfBytesToRead -= TotalBytesRead;
-                            }
-                            NumberOfBytesToRead = byteArray.Length;
-
-                            ContentOfFile = Encoding.UTF8.GetString(byteArray);
-                        }
-
-                        using (FileStream filestream = new(filePath, FileMode.Open, FileAccess.Write))
-                        {
-                            byte[] arrayByte = new UTF8Encoding(true).GetBytes(content);
-                            filestream.Write(arrayByte, 0, arrayByte.Length);
-                        }
-                    }
-                }
-                else
-                {
-                    //CREATE THE FILE
-                    using FileStream FileStream = File.Create(filePath);
-
-                    byte[] byteArray = new UTF8Encoding(true).GetBytes(content);
-
-                    FileStream.Write(byteArray, 0, byteArray.Length);
-                }
-            }
-            catch (Exception) { throw; }
+            File.WriteAllText(filePath, content, Encoding.UTF8);
         }
 
         public static void SetClipBoard(string textToClip)

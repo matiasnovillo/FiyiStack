@@ -21,49 +21,49 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
 {{
     public class {Table.Name}ExportationService : I{Table.Name}ExportationService
     {{
-        public void ExportToExcel(string path, DataTable dt{Table.Name})
+        public void ExportToExcel(string path, DataTable dataTable{Table.Name})
         {{
-            using var Book = new XLWorkbook();
+            using XLWorkbook XLWorkbook = new();
 
-            DataTable dt{Table.Name}Original = new()
+            DataTable DataTable{Table.Name}Original = new()
             {{
                 TableName = ""{Table.Name}""
             }};
 
-            //We define another DataTable dt{Table.Name}Copy to avoid issue related to DateTime conversion
-            DataTable dt{Table.Name}Copy = new()
+            //We define another DataTable DataTable{Table.Name}Copy to avoid issue related to DateTime conversion
+            DataTable DataTable{Table.Name}Copy = new()
             {{
                 TableName = ""{Table.Name}""
             }};
 
-            #region Define columns for dt{Table.Name}Copy
+            #region Define columns for DataTable{Table.Name}Copy
             {GeneratorConfigurationComponent.G1FieldChainer.Properties_ForExcel_Converter_DefineDataColumns}
             #endregion
 
-            dt{Table.Name}Original = dt{Table.Name};
+            DataTable{Table.Name}Original = dataTable{Table.Name};
 
-            foreach (DataRow DataRow in dt{Table.Name}Original.Rows)
+            foreach (DataRow DataRow in DataTable{Table.Name}Original.Rows)
             {{
-                dt{Table.Name}Copy.Rows.Add(DataRow.ItemArray);
+                DataTable{Table.Name}Copy.Rows.Add(DataRow.ItemArray);
             }}
 
-            var Sheet = Book.Worksheets.Add(dt{Table.Name}Copy);
+            IXLWorksheet XLWorksheet = XLWorkbook.Worksheets.Add(DataTable{Table.Name}Copy);
 
-            Sheet.ColumnsUsed().AdjustToContents();
+            XLWorksheet.ColumnsUsed().AdjustToContents();
 
-            Book.SaveAs(path);
+            XLWorkbook.SaveAs(path);
         }}
 
-        public void ExportToCSV(string path, List<{Table.Name}> lst{Table.Name})
+        public void ExportToCSV(string path, List<{Table.Name}> List{Table.Name})
         {{
-            using var Writer = new StreamWriter(path);
+            StreamWriter StreamWriter = new(path);
 
-            using var CsvWriter = new CsvWriter(Writer, CultureInfo.InvariantCulture);
+            using CsvWriter CsvWriter = new(StreamWriter, CultureInfo.InvariantCulture);
 
-            CsvWriter.WriteRecords(lst{Table.Name});
+            CsvWriter.WriteRecords(List{Table.Name});
         }}
 
-        public void ExportToPDF(string path, List<{Table.Name}> lst{Table.Name})
+        public void ExportToPDF(string path, List<{Table.Name}> List{Table.Name})
         {{
             string ProjectName = ""{GeneratorConfigurationComponent.ChosenProject.Name}"";
 
@@ -73,7 +73,7 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
 
             string RowsAsHTML = """";
 
-            foreach ({Table.Name}? {Table.Name} in lst{Table.Name})
+            foreach ({Table.Name}? {Table.Name} in List{Table.Name})
             {{
                 RowsAsHTML += $@""
 <tr>
@@ -112,8 +112,7 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
             ChromePdfRenderer.RenderHtmlAsPdf(FullHTMLContent).SaveAs(path);
         }}
     }}
-}}
-";
+}}";
 
                 return Content;
             }

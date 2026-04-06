@@ -25,93 +25,77 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
         IDbContextFactory<{GeneratorConfigurationComponent.ChosenProject.Name}DbContext> _factory) : I{Table.Name}Repository
     {{
         #region Async Queries    
-        public async Task<IQueryable<{Table.Name}>> AsQueryableAsync()
-        {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
-
-                return DbContext.{Table.Name}.AsQueryable();
-            }}
-            catch (Exception) {{ throw; }}
-        }}
-
         public async Task<int> CountAsync()
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();                
+            await using var DbContext = await _factory.CreateDbContextAsync();                
+            
+            int RowsNumber = await DbContext.{Table.Name}
+                .AsNoTracking()
+                .CountAsync();
 
-                return await DbContext.{Table.Name}.CountAsync();
-            }}
-            catch (Exception) {{ throw; }}
+            return RowsNumber;
         }}
 
         public async Task<{Table.Name}?> GetOneBy{Table.Name}IdAsync(long {Table.Name.ToLower()}Id)
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
+            await using var DbContext = await _factory.CreateDbContextAsync();
                 
-                return await DbContext.{Table.Name}
-                                .FirstOrDefaultAsync(x => x.{Table.Name}Id == {Table.Name.ToLower()}Id);
-            }}
-            catch (Exception) {{ throw; }}
+            {Table.Name}? {Table.Name} = await DbContext.{Table.Name}
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.{Table.Name}Id == {Table.Name.ToLower()}Id);
+
+            return {Table.Name};
         }}
 
         public async Task<List<{Table.Name}>> GetAllAsync()
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
+            await using var DbContext = await _factory.CreateDbContextAsync();
 
-                return await DbContext.{Table.Name}.ToListAsync();
-            }}
-            catch (Exception) {{ throw; }}
+            List<{Table.Name}> List{Table.Name} = await DbContext.{Table.Name}
+                .AsNoTracking()
+                .ToListAsync();
+
+            return List{Table.Name};
         }}
 
-        public async Task<List<{Table.Name}>> GetAllBy{Table.Name}IdCheckedAsync(List<long> lstLONG{Table.Name}IdChecked)
+        public async Task<List<{Table.Name}>> GetAllBy{Table.Name}IdCheckedAsync(List<long> ListChecked{Table.Name}Ids)
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
+            await using var DbContext = await _factory.CreateDbContextAsync();
 
-                return await DbContext.{Table.Name}
-                                       .Where(x => lstLONG{Table.Name}IdChecked.Contains(x.{Table.Name}Id))
-                                       .ToListAsync();
-            }}
-            catch (Exception) {{ throw; }}
+            List<{Table.Name}> List{Table.Name} = await DbContext.{Table.Name}
+                .AsNoTracking()
+                .Where(x => ListChecked{Table.Name}Ids.Contains(x.{Table.Name}Id))
+                .ToListAsync();
+
+            return List{Table.Name};
         }}
 
         public async Task<List<{Table.Name}>> GetAllBy{Table.Name}IdForModalAsync(string textToSearch)
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
+            await using var DbContext = await _factory.CreateDbContextAsync();
 
-                return await DbContext.{Table.Name}
-                                       .Where(x => x.{Table.Name}Id.ToString().Contains(textToSearch))
-                                       .ToListAsync();
-            }}
-            catch (Exception) {{ throw; }}
+            List<{Table.Name}> List{Table.Name} = await DbContext.{Table.Name}
+                .AsNoTracking()
+                .Where(x => x.{Table.Name}Id.ToString().Contains(textToSearch))
+                .ToListAsync();
+
+            return List{Table.Name};
         }}
 
-        public async Task<paginated{Table.Name}DTO> GetAllBy{Table.Name}IdPaginatedAsync(string textToSearch,
+        public async Task<Paginated{Table.Name}DTO> GetAllBy{Table.Name}IdPaginatedAsync(string textToSearch,
             bool strictSearch,
             int pageIndex,
             int pageSize)
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
+            await using var DbContext = await _factory.CreateDbContextAsync();
 
                 string[] words = Regex
                     .Replace(textToSearch
                     .Trim(), @""\s+"", "" "")
-                    .Split("" "");
+                    .Split("" "", StringSplitOptions.RemoveEmptyEntries);
 
-                List<{Table.Name}> lst{Table.Name} = await DbContext.{Table.Name}
-                    .AsQueryable()
+                List<{Table.Name}> List{Table.Name} = await DbContext.{Table.Name}
+                    .AsNoTracking()
                     .Where(x => strictSearch ?
                         words.All(word => x.{Table.Name}Id.ToString().Contains(word)) :
                         words.Any(word => x.{Table.Name}Id.ToString().Contains(word)))
@@ -120,193 +104,160 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
                     .Take(pageSize)
                     .ToListAsync();
 
-                int Total{Table.Name} = lst{Table.Name}.Count;
+                long TotalRecordsInDatabase = await DbContext.{Table.Name}.LongCountAsync();
 
-                List<long> lstLONGUserCreationId = lst{Table.Name}
+                int TotalRecordsInTheList = List{Table.Name}.Count;
+
+                List<long> PossibleUserCreationIds = List{Table.Name}
                     .Select(x => x.UserCreationId)
+                    .Distinct()
                     .ToList();
 
-                List<long> lstLONGUserLastModificationId = lst{Table.Name}
-                    .Select(x => x.UserLastModificationId)
+                List<User> ListUserCreation = await DbContext.User
+                    .Where(x => PossibleUserCreationIds.Contains(x.UserId))
+                    .ToListAsync();
+
+                List<long> PossibleUserLastModificationIds = List{Table.Name}
+                    .Select(x => x.UserCreationId)
+                    .Distinct()
                     .ToList();
 
-                List<User> lstUserCreation = await DbContext.User
-                    .Where(x => lstLONGUserCreationId.Contains(x.UserCreationId))
+                List<User> ListUserLastModification = await DbContext.User
+                    .Where(x => PossibleUserLastModificationIds.Contains(x.UserId))
                     .ToListAsync();
 
-                List<User> lstUserLastModification = await DbContext.User
-                    .Where(x => lstLONGUserLastModificationId.Contains(x.UserLastModificationId))
-                    .ToListAsync();
-
-                return new paginated{Table.Name}DTO
+                return new Paginated{Table.Name}DTO
                 {{
-                    lst{Table.Name} = lst{Table.Name},
-                    lstUserCreation = lstUserCreation,
-                    lstUserLastModification = lstUserLastModification,
-                    TotalRegisters = Total{Table.Name},
+                    List{Table.Name} = List{Table.Name},
+                    ListUserCreation = ListUserCreation,
+                    ListUserLastModification = ListUserLastModification,
+                    TotalRecordsInDatabase = TotalRecordsInDatabase,
+                    TotalRecordsInTheList = TotalRecordsInTheList,
                     PageIndex = pageIndex,
                     PageSize = pageSize
                 }};
-            }}
-            catch (Exception) {{ throw; }}
         }}
         #endregion
 
         #region Async Non-Queries
-        public async Task<bool> AddAsync({Table.Name} {Table.Name.ToLower()})
+        public async Task<int> AddAsync({Table.Name} {Table.Name.ToLower()})
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
+            await using var DbContext = await _factory.CreateDbContextAsync();
 
-                EntityEntry<{Table.Name}> {Table.Name}ToAdd = await DbContext.{Table.Name}.AddAsync({Table.Name.ToLower()});
+            EntityEntry<{Table.Name}> {Table.Name}ToAdd = await DbContext.{Table.Name}.AddAsync({Table.Name.ToLower()});
 
-                bool result = await DbContext.SaveChangesAsync() > 0;
+            int AffectedRowsNumber = await DbContext.SaveChangesAsync();
 
-                return result;
-            }}
-            catch (Exception) {{ throw; }}
+            return AffectedRowsNumber;
         }}
 
-        public async Task<bool> AddRangeAsync(List<{Table.Name}> lst{Table.Name})
+        public async Task<int> AddRangeAsync(List<{Table.Name}> lst{Table.Name})
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
+            await using var DbContext = await _factory.CreateDbContextAsync();
 
-                await DbContext.{Table.Name}.AddRangeAsync(lst{Table.Name});
+            await DbContext.{Table.Name}.AddRangeAsync(lst{Table.Name});
 
-                bool result = await DbContext.SaveChangesAsync() > 0;
+            int AffectedRowsNumber = await DbContext.SaveChangesAsync();
 
-                return result;
-            }}
-            catch (Exception) {{ throw; }}
+            return AffectedRowsNumber;
         }}
 
-        public async Task<bool> UpdateAsync({Table.Name} {Table.Name.ToLower()})
+        public async Task<int> UpdateAsync({Table.Name} {Table.Name.ToLower()})
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
+            await using var DbContext = await _factory.CreateDbContextAsync();
 
-                DbContext.{Table.Name}.Update({Table.Name.ToLower()});
+            DbContext.{Table.Name}.Update({Table.Name.ToLower()});
 
-                bool result = await DbContext.SaveChangesAsync() > 0;
+            int AffectedRowsNumber = await DbContext.SaveChangesAsync();
 
-                return result;
-            }}
-            catch (Exception) {{ throw; }}
+            return AffectedRowsNumber;
         }}
 
-        public async Task<bool> DeleteOneBy{Table.Name}IdAsync(long {Table.Name.ToLower()}Id)
+        public async Task<int> DeleteOneBy{Table.Name}IdAsync(long {Table.Name.ToLower()}Id)
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
+            await using var DbContext = await _factory.CreateDbContextAsync();
 
-                await DbContext.{Table.Name}
-                    .Where(x => x.{Table.Name}Id == {Table.Name.ToLower()}Id)
-                    .ExecuteDeleteAsync();
+            int AffectedRowsNumber = await DbContext.{Table.Name}
+                .Where(x => x.{Table.Name}Id == {Table.Name.ToLower()}Id)
+                .ExecuteDeleteAsync();
 
-                bool Result = await DbContext.SaveChangesAsync() > 0;
-
-                return Result;
-            }}
-            catch (Exception) {{ throw; }}
+            return AffectedRowsNumber;
         }}
 
-        public async Task<bool> DeleteAll{Table.Name}Async()
+        public async Task<int> DeleteAllAsync()
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
+            await using var DbContext = await _factory.CreateDbContextAsync();
 
-                await DbContext.{Table.Name}
-                    .ExecuteDeleteAsync();
+            int AffectedRowsNumber = await DbContext.{Table.Name}
+                .ExecuteDeleteAsync();
 
-                return true;
-            }}
-            catch (Exception)
-            {{
-                throw;
-            }}
+            return AffectedRowsNumber;
         }}
 
-        public async Task<bool> DeleteManyBy{Table.Name}IdAsync(List<{Table.Name}> lst{Table.Name})
+        public async Task<int> DeleteManyAsync(List<{Table.Name}> List{Table.Name})
         {{
-            try
-            {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
+            await using var DbContext = await _factory.CreateDbContextAsync();
 
-                DbContext.{Table.Name}.RemoveRange(lst{Table.Name});
+            DbContext.{Table.Name}.RemoveRange(List{Table.Name});
 
-                int AffectedRows = await DbContext.SaveChangesAsync();
+            int AffectedRows = await DbContext.SaveChangesAsync();
 
-                bool Result = AffectedRows > 0;
-
-                return Result;
-            }}
-            catch (Exception) {{ throw; }}
+            return AffectedRows;
         }}
         #endregion
 
         #region Methods for DataTable
-        public async Task<DataTable> GetAllBy{Table.Name}IdInDataTableAsync(List<long> lst{Table.Name}Checked)
+        public async Task<DataTable> GetAllBy{Table.Name}IdInDataTableAsync(List<long> ListChecked{Table.Name}Ids)
         {{
-            try
+            await using var DbContext = await _factory.CreateDbContextAsync();
+
+            DataTable DataTable = new();
+
+            DataTable.Columns.Add(""{Table.Name}Id"", typeof(string));
+            {GeneratorConfigurationComponent.G1FieldChainer.PropertiesForRepository_DataTable1}
+
+            var ListChecked{Table.Name} = await DbContext.{Table.Name}
+                .AsNoTracking()
+                .Where(x => ListChecked{Table.Name}Ids.Contains(x.{Table.Name}Id))
+                .ToListAsync();
+
+            foreach ({Table.Name} {Table.Name} in ListChecked{Table.Name})
             {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
-
-                DataTable DataTable = new();
-                DataTable.Columns.Add(""{Table.Name}Id"", typeof(string));
-                {GeneratorConfigurationComponent.G1FieldChainer.PropertiesForRepository_DataTable1}
-
-                foreach (long {Table.Name}Id in lst{Table.Name}Checked)
+                if ({Table.Name} != null)
                 {{
-                    {Table.Name} {Table.Name.ToLower()} = await DbContext.{Table.Name}
-                        .Where(x => x.{Table.Name}Id == {Table.Name}Id).FirstOrDefaultAsync();
+                    DataTable.Rows.Add(
+                    {GeneratorConfigurationComponent.G1FieldChainer.PropertiesForRepository_DataTable}
+                    );
+                }}
+            }}                
 
-                    if ({Table.Name.ToLower()} != null)
-                    {{
-                        DataTable.Rows.Add(
-                        {GeneratorConfigurationComponent.G1FieldChainer.PropertiesForRepository_DataTable}
-                        );
-                    }}
-                }}                
-
-                return DataTable;
-            }}
-            catch (Exception) {{ throw; }}
+            return DataTable;
         }}
 
         public async Task<DataTable> GetAllInDataTableAsync()
         {{
-            try
+            await using var DbContext = await _factory.CreateDbContextAsync();
+
+            List<{Table.Name}> List{Table.Name} = await DbContext.{Table.Name}
+                .AsNoTracking()
+                .ToListAsync();
+
+            DataTable DataTable = new();
+            DataTable.Columns.Add(""{Table.Name}Id"", typeof(string));
+            {GeneratorConfigurationComponent.G1FieldChainer.PropertiesForRepository_DataTable1}
+
+            foreach ({Table.Name} {Table.Name} in List{Table.Name})
             {{
-                await using var DbContext = await _factory.CreateDbContextAsync();
-
-                List<{Table.Name}> lst{Table.Name} = await DbContext.{Table.Name}
-                    .ToListAsync();
-
-                DataTable DataTable = new();
-                DataTable.Columns.Add(""{Table.Name}Id"", typeof(string));
-                {GeneratorConfigurationComponent.G1FieldChainer.PropertiesForRepository_DataTable1}
-
-                foreach ({Table.Name} {Table.Name.ToLower()} in lst{Table.Name})
-                {{
-                    DataTable.Rows.Add(
-                        {GeneratorConfigurationComponent.G1FieldChainer.PropertiesForRepository_DataTable}
-                        );
-                }}
-
-                return DataTable;
+                DataTable.Rows.Add(
+                    {GeneratorConfigurationComponent.G1FieldChainer.PropertiesForRepository_DataTable}
+                    );
             }}
-            catch (Exception) {{ throw; }}
+
+            return DataTable;
         }}
         #endregion
     }}
-}}
-";
+}}";
 
                 return Content;
             }

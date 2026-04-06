@@ -7,30 +7,28 @@
             try
             {
                 string Content =
-                $@"using {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.CMS.UserBack.Entities;
-using {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area}.{Table.Name}Back.Entities;
+                $@"using {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area}.{Table.Name}Back.Entities;
+{GeneratorConfigurationComponent.G1FieldChainer.ForeignUsings_DTO}
 
 {Library.Security.WaterMark(Library.Security.EWaterMarkFor.CSharp)}
 
 namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area}.{Table.Name}Back.DTOs
 {{
-    public class paginated{Table.Name}DTO
+    public record Paginated{Table.Name}DTO
     {{
-        public List<{Table.Name}?> lst{Table.Name} {{ get; set; }}
-        public List<User?> lstUserCreation {{ get; set; }}
-        public List<User?> lstUserLastModification {{ get; set; }}
+        public List<{Table.Name}> List{Table.Name} {{ get; init; }} = [];
+        public List<User> ListUserCreation {{ get; init; }} = [];
+        public List<User> ListUserLastModification {{ get; init; }} = [];
 
         //FOREIGN LISTS (TABLES)
         {GeneratorConfigurationComponent.G1FieldChainer.ForeignLists_DTO}
 
-        public int TotalRegisters {{ get; set; }}
+        public long TotalRecordsInDatabase {{ get; set; }}
+        public int TotalRecordsInTheList {{ get; set; }}
         public int PageIndex {{ get; set; }}
         public int PageSize {{ get; set; }}
-
-        public int TotalPages => (int)Math.Ceiling(TotalRegisters / (double)PageSize);
-
+        public int TotalPages => (int)Math.Ceiling(TotalRecordsInTheList / (double)PageSize);
         public bool HasPreviousPage => PageIndex > 1;
-
         public bool HasNextPage => PageIndex < TotalPages;
     }}
 }}";

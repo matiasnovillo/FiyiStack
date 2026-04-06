@@ -19,9 +19,10 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
     {{
         public List<{Table.Name}> ImportExcel(string path, long userId)
         {{
-            List<{Table.Name}> lst{Table.Name} = [];
+            List<{Table.Name}> List{Table.Name} = [];
 
-            var WorkBook = new XLWorkbook(path);
+            XLWorkbook WorkBook = new(path);
+
             var Rows = WorkBook.Worksheet(1).RangeUsed()!.RowsUsed();
 
             foreach (var row in Rows)
@@ -43,15 +44,14 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
                         {GeneratorConfigurationComponent.G1FieldChainer.Properties_ForImport2}
                     }};
 
-                    lst{Table.Name}.Add({Table.Name});
+                    List{Table.Name}.Add({Table.Name});
                 }}
             }}
 
-            return lst{Table.Name};
+            return List{Table.Name};
         }}
     }}
-}}
-";
+}}";
 
                 return Content;
             }

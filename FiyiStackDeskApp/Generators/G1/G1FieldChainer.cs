@@ -47,6 +47,7 @@ namespace FiyiStackDeskApp.Generators.G1
         public string ForeignListsGet_BlazorNonQueryPage { get; set; } = "";
         public string EditPartFK_BlazorNonQueryPage { get; set; } = "";
         public string ForeignLists_DTO { get; set; } = "";
+        public string ForeignUsings_DTO { get; set; } = "";
         public string CancelationTokensProperties_BlazorNonQueryPage { get; set; } = "";
 
         public string ModalsInBlazorPageNonQuery { get; set; } = "";
@@ -91,17 +92,16 @@ namespace FiyiStackDeskApp.Generators.G1
     </th>
     ";
 
-                Properties_ForExcel_Converter_DefineDataColumns += $@"DataColumn dtColumn{field.Name}Fordt{Table.Name}Copy = new()
+                Properties_ForExcel_Converter_DefineDataColumns += $@"DataColumn DataTableColumn{field.Name}ForDataTable{Table.Name}Copy = new()
             {{
                 DataType = typeof(string),
                 ColumnName = ""{field.Name}""
             }};
-            dt{Table.Name}Copy.Columns.Add(dtColumn{field.Name}Fordt{Table.Name}Copy);
+            DataTable{Table.Name}Copy.Columns.Add(DataTableColumn{field.Name}ForDataTable{Table.Name}Copy);
 
             ";
 
-                PropertiesForRepository_DataTable += $@"{Table.Name.ToLower()}.{field.Name},
-                        ";
+                PropertiesForRepository_DataTable += $"{Table.Name}.{field.Name},\r\t\t\t\t\t";
 
                 Properties_ForIronPDF_Converter += $@"<th align=""""left"""" valign=""""top"""" style=""""border-width: 1px; border-style: solid; border-color: #e8e8e8; border-top: none; border-left: none; border-right: none;"""">
             <font face=""""'Source Sans Pro', sans-serif"""" color=""""#000000"""" style=""""font-size: 20px; line-height: 28px; font-weight: 600;"""">
@@ -113,7 +113,7 @@ namespace FiyiStackDeskApp.Generators.G1
                 if (field.Name != Table.Name + "Id")
                 {
                     PropertiesForRepository_DataTable1 += $@"DataTable.Columns.Add(""{field.Name}"", typeof(string));
-                ";
+            ";
                 }
                 
                 switch (Convert.ToInt32(field.DataTypeId))
@@ -122,16 +122,18 @@ namespace FiyiStackDeskApp.Generators.G1
                         throw new Exception("You must choose a Data Type");
                     case 3: //Integer/Long
 
-                        PropertiesForEntityConfiguration += 
-$@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""bigint"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
-
-                ";
+                        
 
                         if (field.Name != "UserCreationId" && field.Name != "UserLastModificationId")
                         {
+                            PropertiesForEntityConfiguration +=
+$@"//{field.Name}
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""bigint"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
+
+            ";
+
                             PropertiesForEntity +=
 $@"        [Long(required: {(field.Nullable == true ? "false" : "true")}, minimum: {field.MinValue}, maximum: {field.MaxValue})]        
         public long{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}
@@ -199,10 +201,10 @@ $@"        [Long(required: {(field.Nullable == true ? "false" : "true")}, minimu
                             PropertiesInHTML_TH_ForBlazorPageQuery += $@"<th>{field.Name}</th>
                                     ";
 
-                            PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</td>
+                            PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</td>
                                             ";
 
-                            PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</p>
+                            PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</p>
                                         ";
                         }
                         else
@@ -213,6 +215,14 @@ $@"        [Long(required: {(field.Nullable == true ? "false" : "true")}, minimu
 $@"        [Range(1, long.MaxValue)]
         public long {field.Name} {{ get; set; }}
 ";
+
+                                PropertiesForEntityConfiguration +=
+$@"//{field.Name}
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""bigint"")
+                .IsRequired(true);
+
+            ";
                             }
 
                             if (field.Name == "UserLastModificationId")
@@ -221,22 +231,29 @@ $@"        [Range(1, long.MaxValue)]
     $@"        [Range(1, long.MaxValue)]
         public long {field.Name} {{ get; set; }}
 ";
+
+                                PropertiesForEntityConfiguration +=
+$@"//{field.Name}
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""bigint"")
+                .IsRequired(true);
+
+            ";
                             }
                         }
 
                         break;
                     case 4: //Boolean
 
-                        PropertiesForEntityConfiguration +=
+                        if (field.Name != "Active")
+                        {
+                            PropertiesForEntityConfiguration +=
 $@"//{field.Name}
                 entity.Property(e => e.{field.Name})
                     .HasColumnType(""tinyint"")
                     .IsRequired({(field.Nullable == true ? "false" : "true")});
 
                 ";
-
-                        if (field.Name != "Active")
-                        {
 
                             PropertiesForEntity +=
 $@"        public bool{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}
@@ -265,7 +282,7 @@ $@"        public bool{(field.Nullable == true ? "?" : "")} {field.Name} {{ get;
                             PropertiesInHTML_TH_ForBlazorPageQuery += $@"<th>{field.Name}</th>
                                     ";
 
-                            PropertiesInHTML_TD_ForBlazorPageQuery += $@"@if (@paginated{Table.Name}DTO.lst{Table.Name}[i]!.{field.Name})
+                            PropertiesInHTML_TD_ForBlazorPageQuery += $@"@if (@Paginated{Table.Name}DTO.List{Table.Name}[i]!.{field.Name})
                                             {{
                                                 <td>
                                                     <span class=""badge rounded-pill bg-success"">Sí</span>
@@ -279,7 +296,7 @@ $@"        public bool{(field.Nullable == true ? "?" : "")} {field.Name} {{ get;
                                             }}
                                             ";
 
-                            PropertiesInHTML_Card_ForBlazorPageQuery += $@"@if (@paginated{Table.Name}DTO.lst{Table.Name}[i]!.{field.Name})
+                            PropertiesInHTML_Card_ForBlazorPageQuery += $@"@if (@Paginated{Table.Name}DTO.List{Table.Name}[i]!.{field.Name})
                                         {{
                                             <p>
                                                 <b>{field.Name}: </b>
@@ -304,6 +321,14 @@ $@"        public bool{(field.Nullable == true ? "?" : "")} {field.Name} {{ get;
                             PropertiesForEntity +=
 $@"        public bool {field.Name} {{ get; set; }}
 ";
+
+                            PropertiesForEntityConfiguration +=
+$@"//{field.Name}
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""tinyint"")
+                .IsRequired(true);
+
+            ";
                         }
 
                         break;
@@ -349,16 +374,16 @@ $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, mini
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""varchar({field.MaxValue})"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""varchar({field.MaxValue})"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
-                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</td>
+                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</td>
                                             ";
 
-                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</p>
+                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</p>
                                         ";
 
                         PropertiesInHTML_BlazorNonQueryPage += $@"<!--{field.Name}-->
@@ -432,16 +457,16 @@ $@"        [DecimalRange(required: {(field.Nullable == true ? "false" : "true")}
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""numeric(18, 2)"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""numeric(18, 2)"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
-                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</td>
+                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</td>
                                             ";
 
-                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</p>
+                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</p>
                                         ";
 
                         PropertiesInHTML_BlazorNonQueryPage += $@"<!--{field.Name}-->
@@ -476,25 +501,27 @@ $@"[Key]
         public long{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}
 ";
 
-                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{Table.Name}Id</td>
+                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{Table.Name}Id</td>
                                             ";
 
-                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>ID: </b>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{Table.Name}Id</p>
+                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>ID: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{Table.Name}Id</p>
                                         ";
 
                         break;
                     case 10: //DateTime
 
-                        PropertiesForEntityConfiguration +=
-$@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""datetime"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
-
-                ";
+                        
 
                         if (field.Name != "DateTimeCreation" && field.Name != "DateTimeLastModification")
                         {
+                            PropertiesForEntityConfiguration +=
+$@"//{field.Name}
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""datetime"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
+
+            ";
+
                             PropertiesForEntity +=
 $@"        [DateTimeRange(required: {(field.Nullable == true ? "false" : "true")}, minimumDate: ""{field.MinValue}"", maximumDate: ""{field.MaxValue}"")]
         public DateTime{(field.Nullable == true ? "?" : "")} {field.Name} {{ get; set; }}
@@ -553,14 +580,22 @@ $@"        [DateTimeRange(required: {(field.Nullable == true ? "false" : "true")
                             PropertiesInHTML_TH_ForBlazorPageQuery += $@"<th>{field.Name}</th>
                                     ";
 
-                            PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</td>
+                            PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</td>
                                             ";
 
-                            PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</p>
+                            PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</p>
                                         ";
                         }
                         else
                         {
+                            PropertiesForEntityConfiguration +=
+$@"//{field.Name}
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""datetime"")
+                .IsRequired(true);
+
+            ";
+
                             PropertiesForEntity +=
 $@"        [DateTimeRange(required: true, minimumDate: ""0001-01-01T00:00:00.0000000"", maximumDate: ""9999-12-31T23:59:59.9999999"")]
         public DateTime {field.Name} {{ get; set; }}
@@ -610,16 +645,16 @@ $@"        [TimeSpanRange(required: {(field.Nullable == true ? "false" : "true")
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""time(7)"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""time(7)"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
-                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</td>
+                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</td>
                                             ";
 
-                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</p>
+                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</p>
                                         ";
 
                         PropertiesInHTML_BlazorNonQueryPage += $@"<!--{field.Name}-->
@@ -688,24 +723,24 @@ $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, mini
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""varchar(7)"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""varchar(7)"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
                         PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>
-                                                <span style=""color:@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}"">
+                                                <span style=""color:@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}"">
                                                     <b class=""fas fa-palette""></b>
-                                                    @paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}
+                                                    @Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}
                                                 </span>
                                             </td>
                                             ";
 
-                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p style=""color:@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name};"">
+                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p style=""color:@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name};"">
                                             <b>{field.Name}: </b>
                                             <b class=""fas fa-palette""></b>
-                                            @paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}
+                                            @Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}
                                         </p>
                                         ";
 
@@ -771,16 +806,16 @@ $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, mini
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""varchar(MAX)"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""varchar(MAX)"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
-                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</td>
+                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</td>
                                             ";
 
-                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<div><b>{field.Name}: </b>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</div>
+                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<div><b>{field.Name}: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</div>
                                         ";
 
                         PropertiesInHTML_BlazorNonQueryPage += $@"<!--{field.Name}-->
@@ -846,16 +881,16 @@ $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, mini
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""varchar(MAX)"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""varchar(MAX)"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
-                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</td>
+                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</td>
                                             ";
 
-                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<div><b>{field.Name}: </b>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</div>
+                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<div><b>{field.Name}: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</div>
                                         ";
 
                         PropertiesInHTML_BlazorNonQueryPage += $@"<!--{field.Name}-->
@@ -972,16 +1007,16 @@ $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, mini
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""varchar({field.MaxValue})"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""varchar({field.MaxValue})"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
-                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</td>
+                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</td>
                                             ";
 
-                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</p>
+                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</p>
                                         ";
 
                         PropertiesInHTML_BlazorNonQueryPage += $@"<!--{field.Name}-->
@@ -1046,26 +1081,26 @@ $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, mini
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""varchar({field.MaxValue})"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""varchar({field.MaxValue})"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
                         PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>
                                                 <a class=""nav-link text-info""
-                                                   href=""tel:@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}"">
+                                                   href=""tel:@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}"">
                                                     <b class=""fas fa-phone""></b>
-                                                    @paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}
+                                                    @Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}
                                                 </a>
                                             </td>
                                             ";
 
                         PropertiesInHTML_Card_ForBlazorPageQuery += $@"<a class=""nav-link text-info px-0""
-                                            href=""tel:@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}"">
+                                            href=""tel:@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}"">
                                             <b>{field.Name}: </b>
                                             <b class=""fas fa-phone""></b>
-                                            @paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}
+                                            @Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}
                                         </a>
                                         ";
 
@@ -1131,28 +1166,28 @@ $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, mini
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""varchar({field.MaxValue})"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""varchar({field.MaxValue})"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
                         PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>
                                                 <a class=""nav-link text-info""
-                                                   href=""@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}""
+                                                   href=""@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}""
                                                    target=""_blank"">
                                                     <b class=""fas fa-link""></b>
-                                                    @paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}
+                                                    @Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}
                                                 </a>
                                             </td>
                                             ";
 
                         PropertiesInHTML_Card_ForBlazorPageQuery += $@"<a class=""nav-link text-info px-0""
-                                            href=""@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}""
+                                            href=""@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}""
                                             target=""_blank"">
                                             <b>{field.Name}: </b>
                                             <b class=""fas fa-link""></b>
-                                            @paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}
+                                            @Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}
                                         </a>
                                         ";
 
@@ -1218,26 +1253,26 @@ $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, mini
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""varchar({field.MaxValue})"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""varchar({field.MaxValue})"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
                         PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>
                                                 <a class=""nav-link text-info""
-                                                   href=""mailto:@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}"">
+                                                   href=""mailto:@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}"">
                                                     <b class=""fas fa-envelope""></b>
-                                                    @paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}
+                                                    @Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}
                                                 </a>
                                             </td>
                                             ";
 
                         PropertiesInHTML_Card_ForBlazorPageQuery += $@"<a class=""nav-link text-info px-0""
-                                            href=""mailto:@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}"">
+                                            href=""mailto:@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}"">
                                             <b>{field.Name}: </b>
                                             <b class=""fas fa-envelope""></b>
-                                            @paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}
+                                            @Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}
                                         </a>
                                         ";
 
@@ -1303,28 +1338,28 @@ $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, mini
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""varchar(MAX)"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""varchar(MAX)"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
                         PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>
                                                 <a class=""nav-link text-info""
-                                                   href=""@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}""
+                                                   href=""@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}""
                                                    download>
                                                     <b class=""fas fa-download""></b>
-                                                    @paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}
+                                                    @Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}
                                                 </a>
                                             </td>
                                             ";
 
                         PropertiesInHTML_Card_ForBlazorPageQuery += $@"<a class=""nav-link text-info px-0""
-                                            href=""@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}""
+                                            href=""@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}""
                                             download>
                                             <b>{field.Name}: </b>
                                             <b class=""fas fa-download""></b>
-                                            @paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}
+                                            @Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}
                                         </a>
                                         ";
 
@@ -1442,16 +1477,16 @@ $@"        [String(required: {(field.Nullable == true ? "false" : "true")}, mini
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""varchar({field.MaxValue})"")
-                    .IsRequired({(field.Nullable == true ? "false" : "true")});
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""varchar({field.MaxValue})"")
+                .IsRequired({(field.Nullable == true ? "false" : "true")});
 
-                ";
+            ";
 
-                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</td>
+                        PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</td>
                                             ";
 
-                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</p>
+                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</p>
                                         ";
 
                         PropertiesInHTML_BlazorNonQueryPage += $@"<!--{field.Name}-->
@@ -1479,11 +1514,11 @@ $@"//{field.Name}
 
                         PropertiesForEntityConfiguration +=
 $@"//{field.Name}
-                entity.Property(e => e.{field.Name})
-                    .HasColumnType(""bigint"")
-                    .IsRequired(true);
+            entity.Property(e => e.{field.Name})
+                .HasColumnType(""bigint"")
+                .IsRequired(true);
 
-                ";
+            ";
 
                         if (field.Name != "UserCreationId" && field.Name != "UserLastModificationId")
                         {
@@ -1520,7 +1555,7 @@ $@"//{field.Name}
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ({field.ForeignTableName} {field.ForeignTableName.ToLower()} in lst{field.ForeignTableName})
+                                @foreach ({field.ForeignTableName} {field.ForeignTableName.ToLower()} in List{field.ForeignTableName})
                                 {{
                                     <tr>
                                         <td>
@@ -1554,17 +1589,19 @@ $@"//{field.Name}
     </div>";
 
 
-                            ForeignLists_DTO += $@"public List<{field.ForeignTableName}?> lst{field.ForeignTableName} {{ get; set; }}
+                            ForeignLists_DTO += $@"public List<{field.ForeignTableName}> List{field.ForeignTableName} {{ get; init; }} = [];
         ";
 
-                            ForeignListsGet_BlazorNonQueryPage += $@"lst{field.ForeignTableName} = await {field.ForeignTableName.ToLower()}Repository.GetAllBy{field.Name}ForModalAsync("""");
+                            ForeignUsings_DTO += $@"using {Project.Name}.Areas.{Table.Area}.{field.ForeignTableName}Back.Entities;";
+
+                            ForeignListsGet_BlazorNonQueryPage += $@"List{field.ForeignTableName} = await {field.ForeignTableName.ToLower()}Repository.GetAllBy{field.Name}ForModalAsync("""");
                     ";
 
                             EditPartFK_BlazorNonQueryPage += $@"{field.ForeignTableName} {field.ForeignTableName} = await {field.ForeignTableName.ToLower()}Repository.GetOneBy{field.Name}Async({Table.Name}.{field.Name});
                     {field.ForeignTableName}{field.ForeignColumnName} = {field.ForeignTableName}.{field.ForeignColumnName};
                     ";
 
-                            ForeignListsDeclaration_BlazorNonQueryPage += $@"private List<{field.ForeignTableName}> lst{field.ForeignTableName} {{ get; set; }} = [];
+                            ForeignListsDeclaration_BlazorNonQueryPage += $@"private List<{field.ForeignTableName}> List{field.ForeignTableName} {{ get; set; }} = [];
     private string {field.ForeignTableName}{field.ForeignColumnName} {{ get; set; }} = """";
     ";
 
@@ -1592,7 +1629,7 @@ $@"        [Range(1, long.MaxValue)]
 
             string TextToSearch = args.Value.ToString();
 
-            lst{field.ForeignTableName} = await {field.ForeignTableName.ToLower()}Repository.GetAllBy{field.Name}ForModalAsync(TextToSearch);
+            List{field.ForeignTableName} = await {field.ForeignTableName.ToLower()}Repository.GetAllBy{field.Name}ForModalAsync(TextToSearch);
         }}
         catch (TaskCanceledException)
         {{
@@ -1672,13 +1709,13 @@ $@"        [Range(1, long.MaxValue)]
                             Properties_ForImport2 += $@"{field.Name} = {field.Name},
                         ";
 
-                            PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</td>
+                            PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</td>
                                             ";
 
                             PropertiesInHTML_TH_ForBlazorPageQuery += $@"<th>{field.Name}</th>
                                     ";
 
-                            PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@paginated{Table.Name}DTO.lst{Table.Name}[i]?.{field.Name}</p>
+                            PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>{field.Name}: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}</p>
                                         ";
                         }
                         else
@@ -1696,7 +1733,7 @@ $@"        [Range(1, long.MaxValue)]
                 PropertiesForEntity += Environment.NewLine;
             }
             PropertiesForEntity = PropertiesForEntity.TrimEnd('\n', '\r', '\n', '\r');
-            PropertiesForRepository_DataTable = PropertiesForRepository_DataTable.TrimEnd('\t', '\t', '\t', '\t', '\t', '\t', '\n', '\r', ',');
+            PropertiesForRepository_DataTable = PropertiesForRepository_DataTable.TrimEnd('\t', '\t', '\t', '\t', '\t', '\r', ',');
         }
     }
 }

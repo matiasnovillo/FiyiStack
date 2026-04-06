@@ -245,11 +245,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (paginated{Table.Name}DTO != null)
+                                @if (Paginated{Table.Name}DTO != null)
                                 {{
-                                    @for (int i = 0; i < paginated{Table.Name}DTO.lst{Table.Name}.Count(); i++)
+                                    @for (int i = 0; i < Paginated{Table.Name}DTO.List{Table.Name}.Count(); i++)
                                     {{
-                                        long {Table.Name.ToLower()}Id = @paginated{Table.Name}DTO.lst{Table.Name}[i]!.{Table.Name}Id;
+                                        long {Table.Name.ToLower()}Id = @Paginated{Table.Name}DTO.List{Table.Name}[i]!.{Table.Name}Id;
                                         string href = $@""CMS/{Table.Area}/{Table.Name}NonQueryPage/{{{Table.Name.ToLower()}Id}}"";
                                         <tr>
                                             <td>
@@ -280,12 +280,12 @@
                 {{
                     <!--LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST -->
                     <!--LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST LIST -->
-                    @if (paginated{Table.Name}DTO != null && paginated{Table.Name}DTO.lst{Table.Name} != null)      
+                    @if (Paginated{Table.Name}DTO != null && Paginated{Table.Name}DTO.List{Table.Name} != null)      
                     {{
                         <div class=""row"">
-                            @for (int i = 0; i < paginated{Table.Name}DTO.lst{Table.Name}.Count(); i++)
+                            @for (int i = 0; i < Paginated{Table.Name}DTO.List{Table.Name}.Count(); i++)
                             {{
-                                long {Table.Name.ToLower()}Id = @paginated{Table.Name}DTO.lst{Table.Name}[i]!.{Table.Name}Id;
+                                long {Table.Name.ToLower()}Id = @Paginated{Table.Name}DTO.List{Table.Name}[i]!.{Table.Name}Id;
                                 string href = $@""CMS/{Table.Area}/{Table.Name}NonQueryPage/{{{Table.Name.ToLower()}Id}}"";
                                 <div class=""col-12 col-md-4 mb-4"">
                                     <div class=""card shadow-lg mt-2"">
@@ -355,9 +355,9 @@
                 <nav aria-label=""Page navigation example"">
                     <ul class=""pagination justify-content-center mt-3"">
                         <li class=""page-item
-                        @(paginated{Table.Name}DTO!.HasPreviousPage ? """" : ""disabled"")"">
+                        @(Paginated{Table.Name}DTO!.HasPreviousPage ? """" : ""disabled"")"">
                             <button class=""page-link""
-                                    disabled=""@(!paginated{Table.Name}DTO.HasPreviousPage)""
+                                    disabled=""@(!Paginated{Table.Name}DTO.HasPreviousPage)""
                                     @onclick=""() => OnPreviousPage()"">
                                 <i class=""fas fa-chevron-left""></i>
                             </button>
@@ -372,7 +372,7 @@
                             }}
                             else
                             {{
-                                <li class=""page-item @(Page == paginated{Table.Name}DTO.PageIndex ? ""active"" : """")"">
+                                <li class=""page-item @(Page == Paginated{Table.Name}DTO.PageIndex ? ""active"" : """")"">
                                     <button class=""page-link""
                                     @onclick=""@(() => OnPageSelected(Page))"">
                                         @Page
@@ -381,9 +381,9 @@
                             }}
                         }}
                         <li class=""page-item
-                        @(paginated{Table.Name}DTO.HasNextPage ? """" : ""disabled"")"">
+                        @(Paginated{Table.Name}DTO.HasNextPage ? """" : ""disabled"")"">
                             <button class=""page-link""
-                                    disabled=""@(!paginated{Table.Name}DTO.HasNextPage)""
+                                    disabled=""@(!Paginated{Table.Name}DTO.HasNextPage)""
                                     @onclick=""() => OnNextPage()"">
                                 <i class=""fas fa-chevron-right""></i>
                             </button>
@@ -703,7 +703,6 @@
             </button>
         </div>
     </div>
-    <{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._FixedPluginForDashboard></{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._FixedPluginForDashboard>
     <{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._FooterForDashboard></{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._FooterForDashboard>
 </div>
 
@@ -713,7 +712,7 @@
     //PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIESPROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES 
 
     #region Properties
-    private List<folderAndPagesForCMSDTO> lstFoldersAndPagesForSideNavDTO {{ get; set; }} = [];
+    private List<FolderAndPagesForCMSDTO> lstFoldersAndPagesForSideNavDTO {{ get; set; }} = [];
 
     private int TotalRegisters {{ get; set; }} = 0;
 
@@ -732,7 +731,7 @@
 
     private {Table.Name} {Table.Name} = new();
 
-    paginated{Table.Name}DTO paginated{Table.Name}DTO = new();
+    private Paginated{Table.Name}DTO Paginated{Table.Name}DTO = new();
 
     private List<long> lstLONG{Table.Name}Checked = [];
 
@@ -743,6 +742,9 @@
     private bool ShowLoaderInMassiveActionModal {{ get; set; }} = false;
     private bool ShowLoaderInExportationModal {{ get; set; }} = false;
     private bool ShowLoaderInImportationModal {{ get; set; }} = false;
+
+    //CANCELATION TOKENS
+    private CancellationTokenSource CancellationTokenSourceForSearchBar = new();
     #endregion
 
     protected override void OnInitialized()
@@ -757,19 +759,19 @@
             {{
                 await base.GetUserIdFromCookies();
 
-                await base.IsUserAvailableToUseThisPage(""/cms/{Table.Area.ToLower()}/{Table.Name.ToLower()}QueryPage"");
+                await base.IsUserAvailableToUseThisPage(""/cms/{Table.Area.ToLower()}/{Table.Name.ToLower()}querypage"");
 
                 lstFoldersAndPagesForSideNavDTO = await rolemenuRepository
                                 .GetAllPagesAndFoldersForCMSByRoleIdAsync(base.User.RoleId);
 
-                paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
+                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
                                                 .GetAllBy{Table.Name}IdPaginatedAsync(
                                                     """",
                                                     CheckStrict,
                                                     1,
                                                     RegistersPerPage);
 
-                TotalRegisters = paginated{Table.Name}DTO.TotalRegisters;
+                TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
 
                 ChosenView = ""list"";
 
@@ -794,14 +796,14 @@
         {{
             RegistersPerPage = registersPerPage;
 
-            paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
                 .GetAllBy{Table.Name}IdPaginatedAsync(
                 TextToSearch,
                 CheckStrict,
                 1,
                 RegistersPerPage);
 
-            TotalRegisters = paginated{Table.Name}DTO.TotalRegisters;
+            TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
         }}
         catch (Exception ex)
         {{
@@ -818,18 +820,27 @@
 
     private async Task SearchText(ChangeEventArgs args)
     {{
+        CancellationTokenSourceForSearchBar.Cancel();
+        CancellationTokenSourceForSearchBar = new();
+
         try
         {{
+            await Task.Delay(300, CancellationTokenSourceForSearchBar.Token);
+
             TextToSearch = args.Value.ToString();
 
-            paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
                 .GetAllBy{Table.Name}IdPaginatedAsync(
                 TextToSearch,
                 CheckStrict,
                 1,
                 RegistersPerPage);
 
-            TotalRegisters = paginated{Table.Name}DTO.TotalRegisters;
+            TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
+        }}
+        catch (TaskCanceledException)
+        {{
+            //User still writing, do nothing and wait for the next event to trigger
         }}
         catch (Exception ex)
         {{
@@ -866,14 +877,14 @@
             {{
                 await {Table.Name.ToLower()}Repository.DeleteOneBy{Table.Name}IdAsync(Selected{Table.Name}IdToDelete.Value);
 
-                paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
+                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
                     .GetAllBy{Table.Name}IdPaginatedAsync(
                     TextToSearch,
                     CheckStrict,
                     1,
                     RegistersPerPage);
 
-                TotalRegisters = paginated{Table.Name}DTO.TotalRegisters;
+                TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
 
                 await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Éxito"", ""Registro borrado correctamente."", ""success"");
             }}
@@ -895,9 +906,9 @@
     {{
         try
         {{
-            long[] lst{Table.Name}Id = {{ {Table.Name.ToLower()}Id }};
+            long[] List{Table.Name}Id = {{ {Table.Name.ToLower()}Id }};
 
-            foreach (int {Table.Name}Id in lst{Table.Name}Id)
+            foreach (int {Table.Name}Id in List{Table.Name}Id)
             {{
                 if (lstLONG{Table.Name}Checked.Contains({Table.Name}Id))
                 {{
@@ -931,17 +942,17 @@
         int MaxVisiblePages = 5;
         List<int> lstINTPages = new List<int>();
 
-        if (paginated{Table.Name}DTO.TotalPages <= MaxVisiblePages + 2)
+        if (Paginated{Table.Name}DTO.TotalPages <= MaxVisiblePages + 2)
         {{
             //Show all pages if there are few
-            for (int i = 1; i <= paginated{Table.Name}DTO.TotalPages; i++)
+            for (int i = 1; i <= Paginated{Table.Name}DTO.TotalPages; i++)
                 lstINTPages.Add(i);
         }}
         else
         {{
-            int Current = paginated{Table.Name}DTO.PageIndex;
+            int Current = Paginated{Table.Name}DTO.PageIndex;
             int Start = Math.Max(2, Current - 1);
-            int End = Math.Min(paginated{Table.Name}DTO.TotalPages - 1, Current + 1);
+            int End = Math.Min(Paginated{Table.Name}DTO.TotalPages - 1, Current + 1);
 
             lstINTPages.Add(1); //Always show the first one
 
@@ -951,10 +962,10 @@
             for (int i = Start; i <= End; i++)
                 lstINTPages.Add(i);
 
-            if (End < paginated{Table.Name}DTO.TotalPages - 1)
+            if (End < Paginated{Table.Name}DTO.TotalPages - 1)
                 lstINTPages.Add(-2); // -2 will be ""...""
 
-            lstINTPages.Add(paginated{Table.Name}DTO.TotalPages); //Always show the latest
+            lstINTPages.Add(Paginated{Table.Name}DTO.TotalPages); //Always show the latest
         }}
 
         return lstINTPages;
@@ -964,17 +975,17 @@
     {{
         try
         {{
-            if (paginated{Table.Name}DTO.HasPreviousPage)
+            if (Paginated{Table.Name}DTO.HasPreviousPage)
             {{
-                paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
+                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
                     .GetAllBy{Table.Name}IdPaginatedAsync(
                     TextToSearch,
                     CheckStrict,
-                    (paginated{Table.Name}DTO.PageIndex - 1),
-                    paginated{Table.Name}DTO.PageSize);
+                    (Paginated{Table.Name}DTO.PageIndex - 1),
+                    Paginated{Table.Name}DTO.PageSize);
             }}
 
-            TotalRegisters = paginated{Table.Name}DTO.TotalRegisters;
+            TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
         }}
         catch (Exception ex)
         {{
@@ -993,14 +1004,14 @@
     {{
         try
         {{
-            paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
                 .GetAllBy{Table.Name}IdPaginatedAsync(
                 TextToSearch,
                 CheckStrict,
                 pageIndex,
-                paginated{Table.Name}DTO.PageSize);
+                Paginated{Table.Name}DTO.PageSize);
 
-            TotalRegisters = paginated{Table.Name}DTO.TotalRegisters;
+            TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
         }}
         catch (Exception ex)
         {{
@@ -1019,17 +1030,17 @@
     {{
         try
         {{
-            if (paginated{Table.Name}DTO.HasNextPage)
+            if (Paginated{Table.Name}DTO.HasNextPage)
             {{
-                paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
+                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
                     .GetAllBy{Table.Name}IdPaginatedAsync(
                     TextToSearch,
                     CheckStrict,
-                    (paginated{Table.Name}DTO.PageIndex + 1),
-                    paginated{Table.Name}DTO.PageSize);
+                    (Paginated{Table.Name}DTO.PageIndex + 1),
+                    Paginated{Table.Name}DTO.PageSize);
             }}
 
-            TotalRegisters = paginated{Table.Name}DTO.TotalRegisters;
+            TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
         }}
         catch (Exception ex)
         {{
@@ -1108,20 +1119,20 @@
             PathWithFile = $@""wwwroot/{{PathWithFile.Replace(""\\"", ""/"")}}"";
 
             //Import Excel file
-            List<{Table.Name}> lst{Table.Name} = {Table.Name.ToLower()}ImportationService.ImportExcel(PathWithFile, User.UserId);
+            List<{Table.Name}> List{Table.Name} = {Table.Name.ToLower()}ImportationService.ImportExcel(PathWithFile, User.UserId);
 
             //Save in DB
-            await {Table.Name.ToLower()}Repository.AddRangeAsync(lst{Table.Name});
+            await {Table.Name.ToLower()}Repository.AddRangeAsync(List{Table.Name});
 
             //Update page with new records
-            paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
                                                 .GetAllBy{Table.Name}IdPaginatedAsync(
                                                     """",
                                                     CheckStrict,
                                                     1,
                                                     RegistersPerPage);
 
-            TotalRegisters = paginated{Table.Name}DTO.TotalRegisters;
+            TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
 
             await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Éxito"", ""Importación finalizada correctamente."", ""success"");
         }}
@@ -1217,7 +1228,7 @@
 
             
 
-            List<{Table.Name}?> lst{Table.Name} = [];
+            List<{Table.Name}?> List{Table.Name} = [];
 
             if (ExportationType == ""only-chosen"")
             {{
@@ -1228,11 +1239,11 @@
                     return;
                 }}
 
-                lst{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
+                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
             }}
             else
             {{
-                lst{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllAsync();
+                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllAsync();
             }}
 
             //Prepare path to download
@@ -1251,7 +1262,7 @@
 
             DownloadPathForCSV = $@""wwwroot/Downloads/CSVFiles/{Table.Name}/{{base.User.UserId}}_{{DateTime.Now.ToString(""yyyy_MM_dd_HH_mm_ss_fff"")}}.csv"";
 
-            {Table.Name.ToLower()}ExportationService.ExportToCSV(DownloadPathForCSV, lst{Table.Name});
+            {Table.Name.ToLower()}ExportationService.ExportToCSV(DownloadPathForCSV, List{Table.Name});
 
             //Delete wwwroot from path to download correctly
             DownloadPathForCSV = DownloadPathForCSV.Replace(""wwwroot"", """");            
@@ -1280,7 +1291,7 @@
             ShowLoaderInExportationModal = true;
             await InvokeAsync(StateHasChanged);
 
-            List<{Table.Name}?> lst{Table.Name} = [];
+            List<{Table.Name}?> List{Table.Name} = [];
 
             if (ExportationType == ""only-chosen"")
             {{
@@ -1291,11 +1302,11 @@
                     return;
                 }}
 
-                lst{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
+                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
             }}
             else
             {{
-                lst{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllAsync();
+                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllAsync();
             }}
 
             //Prepare path to download
@@ -1314,7 +1325,7 @@
 
             DownloadPathForPDF = $@""wwwroot/Downloads/PDFFiles/{Table.Name}/{{base.User.UserId}}_{{DateTime.Now.ToString(""yyyy_MM_dd_HH_mm_ss_fff"")}}.pdf"";
 
-            {Table.Name.ToLower()}ExportationService.ExportToPDF(DownloadPathForPDF, lst{Table.Name});
+            {Table.Name.ToLower()}ExportationService.ExportToPDF(DownloadPathForPDF, List{Table.Name});
 
             //Delete wwwroot from path to download correctly
             DownloadPathForPDF = DownloadPathForPDF.Replace(""wwwroot"", """");
@@ -1348,7 +1359,7 @@
             ShowLoaderInMassiveActionModal = true;
             await InvokeAsync(StateHasChanged);
 
-            List<{Table.Name}?> lst{Table.Name} = [];
+            List<{Table.Name}?> List{Table.Name} = [];
 
             if (MassiveActionType == ""only-chosen"")
             {{
@@ -1359,29 +1370,29 @@
                     return;
                 }}
 
-                lst{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
+                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
             }}
             else
             {{
-                lst{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllAsync();
+                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllAsync();
             }}
 
             //To avoid conflicts with EF Core
-            foreach ({Table.Name} {Table.Name.ToLower()} in lst{Table.Name})
+            foreach ({Table.Name} {Table.Name.ToLower()} in List{Table.Name})
             {{
                 {Table.Name.ToLower()}.{Table.Name}Id = 0;
             }}
 
-            await {Table.Name.ToLower()}Repository.AddRangeAsync(lst{Table.Name});
+            await {Table.Name.ToLower()}Repository.AddRangeAsync(List{Table.Name});
 
-            paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
                                                 .GetAllBy{Table.Name}IdPaginatedAsync(
                                                     """",
                                                     CheckStrict,
                                                     1,
                                                     RegistersPerPage);
 
-            TotalRegisters = paginated{Table.Name}DTO.TotalRegisters;
+            TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
 
             lstLONG{Table.Name}Checked.Clear();
 
@@ -1418,23 +1429,23 @@
                     return;
                 }}
 
-                List<{Table.Name}?> lst{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
+                List<{Table.Name}?> List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
 
-                await {Table.Name.ToLower()}Repository.DeleteManyBy{Table.Name}IdAsync(lst{Table.Name});
+                await {Table.Name.ToLower()}Repository.DeleteManyAsync(List{Table.Name});
             }}
             else
             {{
-                await {Table.Name.ToLower()}Repository.DeleteAll{Table.Name}Async();
+                await {Table.Name.ToLower()}Repository.DeleteAllAsync();
             }}
 
-            paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
                                                 .GetAllBy{Table.Name}IdPaginatedAsync(
                                                     """",
                                                     CheckStrict,
                                                     1,
                                                     RegistersPerPage);
 
-            TotalRegisters = paginated{Table.Name}DTO.TotalRegisters;
+            TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
 
             lstLONG{Table.Name}Checked.Clear();
 
@@ -1455,9 +1466,7 @@
         }}
     }}
     #endregion
-}}
-
-";
+}}";
 
                 return Content;
             }

@@ -92,7 +92,7 @@ namespace {GeneratorConfigurationComponent.ChosenProject.Name}.Areas.{Table.Area
                 string[] Words = Regex
                     .Replace(textToSearch
                     .Trim(), @""\s+"", "" "")
-                    .Split("" "", StringSplitOptions.RemoveEmptyEntries);
+                    .Split("" "");
 
                 List<{Table.Name}> List{Table.Name} = await DbContext.{Table.Name}
                     .AsNoTracking()

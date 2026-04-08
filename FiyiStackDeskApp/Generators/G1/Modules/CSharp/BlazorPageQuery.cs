@@ -19,19 +19,20 @@
 @inject {Table.Name}Repository {Table.Name.ToLower()}Repository;
 @inject {Table.Name}ExportationService {Table.Name.ToLower()}ExportationService;
 @inject {Table.Name}ImportationService {Table.Name.ToLower()}ImportationService;
-@inject IJSRuntime IJSRuntime;
 
-<PageTitle>Buscar {Table.Name} - {Table.Area}</PageTitle>
+@using {GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard;
 
-<{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._SideNavForDashboard lstFoldersAndPagesForSideNavDTO=""lstFoldersAndPagesForSideNavDTO""></{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._SideNavForDashboard>
+<PageTitle>Buscar {Table.Name} | {Table.Area}</PageTitle>
 
+<HeadContent>
+    <meta name=""robots"" content=""noindex, nofollow"" />
+</HeadContent>
+
+<_SideNav ListFolderAndPagesForCMSDTO=""ListFolderAndPagesForCMSDTO""></_SideNav>
 <div class=""main-content position-relative max-height-vh-100 h-100"">
-    <{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._NavBarForDashboard Pagina=""{Table.Name}""></{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._NavBarForDashboard>
+    <_NavBar PageName=""{Table.Name}""></_NavBar>
     <div class=""container-fluid px-2 px-md-4"">
-        <div class=""page-header min-height-300 border-radius-xl mt-4""
-        style=""background-image: url('img/System/Landscape.jpg');"">
-            <span class=""mask bg-gradient-dark opacity-6""></span>
-        </div>
+        <_BackgroundImage></_BackgroundImage>
         <div class=""card mx-3 mx-md-4 mt-n6"">
             <!-- CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER -->
             <!-- CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER CARD HEADER -->
@@ -60,9 +61,6 @@
             <div class=""card-body px-3"">
                 <!--Searchbox-->
                 <div class=""input-group input-group-dynamic mb-3"">
-                    <span class=""input-group-text"">
-                        <i class=""fas fa-search"" aria-hidden=""true""></i>
-                    </span>
                     <input class=""form-control"" 
                     @oninput=""SearchText""
                     placeholder=""Buscar {Table.Name.ToLower()} por {Table.Name}Id...""
@@ -286,7 +284,7 @@
                             @for (int i = 0; i < Paginated{Table.Name}DTO.List{Table.Name}.Count(); i++)
                             {{
                                 long {Table.Name.ToLower()}Id = @Paginated{Table.Name}DTO.List{Table.Name}[i]!.{Table.Name}Id;
-                                string href = $@""CMS/{Table.Area}/{Table.Name}NonQueryPage/{{{Table.Name.ToLower()}Id}}"";
+                                string href = $@""cms/{Table.Area.ToLower()}/{Table.Name.ToLower()}nonquerypage/{{{Table.Name.ToLower()}Id}}"";
                                 <div class=""col-12 col-md-4 mb-4"">
                                     <div class=""card shadow-lg mt-2"">
                                         <div class=""card-body"">
@@ -703,7 +701,7 @@
             </button>
         </div>
     </div>
-    <{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._FooterForDashboard></{GeneratorConfigurationComponent.ChosenProject.Name}.Components.Shared.ComponentsForDashboard._FooterForDashboard>
+    <_Footer></_Footer>
 </div>
 
 @code {{
@@ -712,7 +710,7 @@
     //PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIESPROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES 
 
     #region Properties
-    private List<FolderAndPagesForCMSDTO> lstFoldersAndPagesForSideNavDTO {{ get; set; }} = [];
+    private List<FolderAndPagesForCMSDTO> ListFolderAndPagesForCMSDTO {{ get; set; }} = [];
 
     private int TotalRegisters {{ get; set; }} = 0;
 
@@ -761,7 +759,7 @@
 
                 await base.IsUserAvailableToUseThisPage(""/cms/{Table.Area.ToLower()}/{Table.Name.ToLower()}querypage"");
 
-                lstFoldersAndPagesForSideNavDTO = await rolemenuRepository
+                ListFolderAndPagesForCMSDTO = await rolemenuRepository
                                 .GetAllPagesAndFoldersForCMSByRoleIdAsync(base.User.RoleId);
 
                 Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository

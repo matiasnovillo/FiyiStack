@@ -514,8 +514,11 @@ $@"[Key]
                         PropertiesInHTML_TD_ForBlazorPageQuery += $@"<td>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{Table.Name}Id</td>
                                             ";
 
-                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p><b>ID: </b>@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{Table.Name}Id</p>
-                                        ";
+                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p>
+                                                <b>ID:</b>
+                                                @Paginated{Table.Name}DTO.List{Table.Name}[i].{Table.Name}Id
+                                            </p>
+                                            ";
 
                         break;
                     //DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME//DATETIME
@@ -1385,14 +1388,26 @@ $@"//{field.Name}
                                             </td>
                                             ";
 
-                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<a class=""nav-link text-info px-0""
-                                            href=""@Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}""
-                                            download>
-                                            <b>{field.Name}: </b>
-                                            <b class=""fas fa-download""></b>
-                                            @Paginated{Table.Name}DTO.List{Table.Name}[i]?.{field.Name}
-                                        </a>
-                                        ";
+                        PropertiesInHTML_Card_ForBlazorPageQuery += $@"<p>
+                                                <b>{field.Name}:</b>
+                                                <br />
+                                                @if(Paginated{Table.Name}DTO.List{Table.Name}[i].{field.Name} != null)
+                                                {{
+                                                    <a class=""nav-link text-info px-0""
+                                                        href=""@Paginated{Table.Name}DTO.List{Table.Name}[i].{field.Name}""
+                                                        download>
+                                                        <i class=""fas fa-download""></i>
+                                                        @Paginated{Table.Name}DTO.List{Table.Name}[i].{field.Name}
+                                                    </a>
+                                                }}
+                                                else
+                                                {{
+                                                    <span class=""badge rounded-pill bg-secondary"">
+                                                        [NULO]
+                                                    </span>
+                                                }}
+                                            </p>
+                                            ";
 
                         PropertiesInHTML_BlazorNonQueryPage += $@"<!--{field.Name}-->
                     <div class=""input-group input-group-static mb-5 pb-2"">

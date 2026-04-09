@@ -218,7 +218,7 @@ namespace FiyiStackDeskApp.Forms
                         {
                             Name = "DateTimeCreation",
                             DataTypeId = 10,
-                            Nullable = true,
+                            Nullable = false,
                             HistoryUser = "",
                             Regex = string.Empty,
                             Active = true,
@@ -239,7 +239,7 @@ namespace FiyiStackDeskApp.Forms
                         {
                             Name = "DateTimeLastModification",
                             DataTypeId = 10,
-                            Nullable = true,
+                            Nullable = false,
                             HistoryUser = "",
                             Regex = string.Empty,
                             Active = true,
@@ -260,7 +260,7 @@ namespace FiyiStackDeskApp.Forms
                         {
                             Name = "UserCreationId",
                             DataTypeId = 3,
-                            Nullable = true,
+                            Nullable = false,
                             HistoryUser = "",
                             Regex = string.Empty,
                             Active = true,
@@ -282,7 +282,7 @@ namespace FiyiStackDeskApp.Forms
                         {
                             Name = "UserLastModificationId",
                             DataTypeId = 3,
-                            Nullable = true,
+                            Nullable = false,
                             HistoryUser = "",
                             Regex = string.Empty,
                             Active = true,
@@ -303,7 +303,7 @@ namespace FiyiStackDeskApp.Forms
                         {
                             Name = "Active",
                             DataTypeId = 4,
-                            Nullable = true,
+                            Nullable = false,
                             HistoryUser = "",
                             Regex = string.Empty,
                             Active = true,

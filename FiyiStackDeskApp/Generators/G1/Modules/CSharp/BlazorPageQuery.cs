@@ -295,7 +295,7 @@
                                                 <div class=""checkbox-container d-flex align-items-center justify-content-center"">
                                                     <input class=""larger-checkbox""
                                                     type=""checkbox""
-                                                    checked=""@lstLONG{Table.Name}Checked.Contains({Table.Name.ToLower()}Id)""
+                                                    checked=""@ListChecked{Table.Name}Ids.Contains({Table.Name.ToLower()}Id)""
                                                     @onchange=""(() => CheckList({Table.Name.ToLower()}Id))"" />
                                                 </div>
                                                 <NavLink class=""btn btn-outline-info mx-3 btn-sm""
@@ -709,7 +709,7 @@
     //PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIESPROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES 
     //PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIESPROPERTIES PROPERTIES PROPERTIES PROPERTIES PROPERTIES 
 
-    #region Properties
+    #region PROPERTIES
     private List<FolderAndPagesForCMSDTO> ListFolderAndPagesForCMSDTO {{ get; set; }} = [];
 
     private int TotalRegisters {{ get; set; }} = 0;
@@ -718,20 +718,18 @@
 
     private bool CheckStrict {{ get; set; }}
 
-    private string? TextToSearch {{ get; set; }} = """";
+    private string TextToSearch {{ get; set; }} = string.Empty;
 
     private string? ExportationType {{ get; set; }} = ""only-chosen"";
     private string? MassiveActionType {{ get; set; }} = ""only-chosen"";
 
-    private string? DownloadPathForExcel {{ get; set; }} = """";
-    private string? DownloadPathForPDF {{ get; set; }} = """";
-    private string? DownloadPathForCSV {{ get; set; }} = """";
-
-    private {Table.Name} {Table.Name} = new();
+    private string? DownloadPathForExcel {{ get; set; }} = string.Empty;
+    private string? DownloadPathForPDF {{ get; set; }} = string.Empty;
+    private string? DownloadPathForCSV {{ get; set; }} = string.Empty;
 
     private Paginated{Table.Name}DTO Paginated{Table.Name}DTO = new();
 
-    private List<long> lstLONG{Table.Name}Checked = [];
+    private List<long> ListChecked{Table.Name}Ids = [];
 
     private int RegistersPerPage {{ get; set; }} = 50;
 
@@ -760,42 +758,45 @@
                 await base.IsUserAvailableToUseThisPage(""/cms/{Table.Area.ToLower()}/{Table.Name.ToLower()}querypage"");
 
                 ListFolderAndPagesForCMSDTO = await rolemenuRepository
-                                .GetAllPagesAndFoldersForCMSByRoleIdAsync(base.User.RoleId);
+                    .GetAllPagesAndFoldersForCMSByRoleIdAsync(base.User!.RoleId);
 
-                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
-                                                .GetAllBy{Table.Name}IdPaginatedAsync(
-                                                    """",
-                                                    CheckStrict,
-                                                    1,
-                                                    RegistersPerPage);
+                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdPaginatedAsync(
+                    string.Empty,
+                    CheckStrict,
+                    1,
+                    RegistersPerPage);
 
                 TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
 
                 ChosenView = ""list"";
-
-                await InvokeAsync(StateHasChanged);
             }}
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Error"", ""Hubo un error. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                ""Error"", 
+                ""Hubo un error. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
+        }}
+        finally
+        {{
+            await InvokeAsync(StateHasChanged);
         }}
     }}
 
     //EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTSEVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTSEVENTS EVENTS EVENTS EVENTS EVENTS EVENTS
     //EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTSEVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTS EVENTSEVENTS EVENTS EVENTS EVENTS EVENTS EVENTS
 
-    #region Events
+    #region EVENTS
     private async Task ChangeRegistersPerPage(int registersPerPage)
     {{
         try
         {{
             RegistersPerPage = registersPerPage;
 
-            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
-                .GetAllBy{Table.Name}IdPaginatedAsync(
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdPaginatedAsync(
                 TextToSearch,
                 CheckStrict,
                 1,
@@ -805,13 +806,15 @@
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Error"", ""Hubo un error. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                ""Error"", 
+                ""Hubo un error. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await InvokeAsync(StateHasChanged);
         }}
     }}
@@ -825,10 +828,9 @@
         {{
             await Task.Delay(300, CancellationTokenSourceForSearchBar.Token);
 
-            TextToSearch = args.Value.ToString();
+            TextToSearch = args.Value?.ToString() ?? string.Empty;
 
-            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
-                .GetAllBy{Table.Name}IdPaginatedAsync(
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdPaginatedAsync(
                 TextToSearch,
                 CheckStrict,
                 1,
@@ -842,29 +844,61 @@
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Error"", ""Hubo un error. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                ""Error"", 
+                ""Hubo un error. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await InvokeAsync(StateHasChanged);
         }}
     }}
 
     private async Task ChangeView(string chosenView)
     {{
-        ChosenView = chosenView;
+        try
+        {{
+            ChosenView = chosenView;
+        }}
+        catch (Exception ex)
+        {{
+            await base.CatchException(ex);
 
-        //Re-render the page
-        await InvokeAsync(StateHasChanged);
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                ""Error"", 
+                ""Hubo un error. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
+        }}
+        finally
+        {{
+            await InvokeAsync(StateHasChanged);
+        }}
     }}
 
     private async Task ShowDeleteNotification(long {Table.Name.ToLower()}Id)
     {{
-        Selected{Table.Name}IdToDelete = {Table.Name.ToLower()}Id;
-        await IJSRuntime.InvokeVoidAsync(""notificationHelper.showDeletionNotification"");
+        try
+        {{
+            Selected{Table.Name}IdToDelete = {Table.Name.ToLower()}Id;
+            
+            await IJSRuntime.InvokeVoidAsync(""notificationHelper.showDeletionNotification"");
+        }}
+        catch (Exception ex)
+        {{
+            await base.CatchException(ex);
+
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"",
+                ""Error"",
+                ""Hubo un error. Intente nuevamente."",
+                NotificationTypeForJs.Error);
+        }}
+        finally
+        {{
+            await InvokeAsync(StateHasChanged);
+        }}
     }}
 
     private async Task ConfirmDeletion()
@@ -875,8 +909,7 @@
             {{
                 await {Table.Name.ToLower()}Repository.DeleteOneBy{Table.Name}IdAsync(Selected{Table.Name}IdToDelete.Value);
 
-                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
-                    .GetAllBy{Table.Name}IdPaginatedAsync(
+                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdPaginatedAsync(
                     TextToSearch,
                     CheckStrict,
                     1,
@@ -884,18 +917,23 @@
 
                 TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
 
-                await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Éxito"", ""Registro borrado correctamente."", ""success"");
+                await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                    ""Éxito"", 
+                    ""Registro borrado correctamente."", 
+                    NotificationTypeForJs.Success);
             }}
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Error"", ""Hubo un error. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                ""Error"", 
+                ""Hubo un error. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await InvokeAsync(StateHasChanged);
         }}
     }}
@@ -908,25 +946,27 @@
 
             foreach (int {Table.Name}Id in List{Table.Name}Id)
             {{
-                if (lstLONG{Table.Name}Checked.Contains({Table.Name}Id))
+                if (ListChecked{Table.Name}Ids.Contains({Table.Name}Id))
                 {{
-                    lstLONG{Table.Name}Checked.Remove({Table.Name}Id);
+                    ListChecked{Table.Name}Ids.Remove({Table.Name}Id);
                 }}
                 else
                 {{
-                    lstLONG{Table.Name}Checked.Add({Table.Name}Id);
+                    ListChecked{Table.Name}Ids.Add({Table.Name}Id);
                 }}
             }}
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Error"", ""Hubo un error. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                ""Error"", 
+                ""Hubo un error. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await InvokeAsync(StateHasChanged);
         }}
     }}
@@ -934,17 +974,17 @@
 
     //PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATIONPAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION
     //PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATIONPAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION PAGINATION
-    #region Pagination
+    #region PAGINATION
     private List<int> GetVisiblePages()
     {{
         int MaxVisiblePages = 5;
-        List<int> lstINTPages = new List<int>();
+        List<int> ListPages = new List<int>();
 
         if (Paginated{Table.Name}DTO.TotalPages <= MaxVisiblePages + 2)
         {{
             //Show all pages if there are few
             for (int i = 1; i <= Paginated{Table.Name}DTO.TotalPages; i++)
-                lstINTPages.Add(i);
+                ListPages.Add(i);
         }}
         else
         {{
@@ -952,21 +992,21 @@
             int Start = Math.Max(2, Current - 1);
             int End = Math.Min(Paginated{Table.Name}DTO.TotalPages - 1, Current + 1);
 
-            lstINTPages.Add(1); //Always show the first one
+            ListPages.Add(1); //Always show the first one
 
             if (Start > 2)
-                lstINTPages.Add(-1); // -1 will be ""...""
+                ListPages.Add(-1); // -1 will be ""...""
 
             for (int i = Start; i <= End; i++)
-                lstINTPages.Add(i);
+                ListPages.Add(i);
 
             if (End < Paginated{Table.Name}DTO.TotalPages - 1)
-                lstINTPages.Add(-2); // -2 will be ""...""
+                ListPages.Add(-2); // -2 will be ""...""
 
-            lstINTPages.Add(Paginated{Table.Name}DTO.TotalPages); //Always show the latest
+            ListPages.Add(Paginated{Table.Name}DTO.TotalPages); //Always show the latest
         }}
 
-        return lstINTPages;
+        return ListPages;
     }}
 
     private async Task OnPreviousPage()
@@ -975,8 +1015,7 @@
         {{
             if (Paginated{Table.Name}DTO.HasPreviousPage)
             {{
-                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
-                    .GetAllBy{Table.Name}IdPaginatedAsync(
+                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdPaginatedAsync(
                     TextToSearch,
                     CheckStrict,
                     (Paginated{Table.Name}DTO.PageIndex - 1),
@@ -987,13 +1026,15 @@
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Error"", ""Hubo un error. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                ""Error"", 
+                ""Hubo un error. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await InvokeAsync(StateHasChanged);
         }}
     }}
@@ -1002,8 +1043,7 @@
     {{
         try
         {{
-            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
-                .GetAllBy{Table.Name}IdPaginatedAsync(
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdPaginatedAsync(
                 TextToSearch,
                 CheckStrict,
                 pageIndex,
@@ -1013,13 +1053,15 @@
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Error"", ""Hubo un error. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                ""Error"", 
+                ""Hubo un error. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await InvokeAsync(StateHasChanged);
         }}
     }}
@@ -1030,8 +1072,7 @@
         {{
             if (Paginated{Table.Name}DTO.HasNextPage)
             {{
-                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
-                    .GetAllBy{Table.Name}IdPaginatedAsync(
+                Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdPaginatedAsync(
                     TextToSearch,
                     CheckStrict,
                     (Paginated{Table.Name}DTO.PageIndex + 1),
@@ -1042,13 +1083,15 @@
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Error"", ""Hubo un error. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                ""Error"", 
+                ""Hubo un error. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await InvokeAsync(StateHasChanged);
         }}
     }}
@@ -1057,13 +1100,14 @@
     //IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONSIMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONSIMPORTATIONS
     //IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONSIMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONS IMPORTATIONSIMPORTATIONS
 
-    #region Importations
+    #region IMPORTATIONS
     private async Task UploadImportingExcelFile(InputFileChangeEventArgs e)
     {{
 
         try
         {{
             ShowLoaderInImportationModal = true;
+
             await InvokeAsync(StateHasChanged);
 
             //Neccesary data
@@ -1071,12 +1115,16 @@
 
             long MaxFileSize = 1024L * 1024L * 3; //3MB max.
 
-            string Extension = Path.GetExtension(File.Name)?.ToLowerInvariant();
+            string Extension = Path.GetExtension(File.Name).ToLowerInvariant();
 
             //Validation
             if (Extension != "".xlsx"")
             {{
-                await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Atención"", ""Archivo inválido. Solo se permiten archivos Excel (.xlsx)."", ""warning"");
+                await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                    ""Atención"", 
+                    ""Archivo inválido. Solo se permiten archivos Excel (.xlsx)."", 
+                    NotificationTypeForJs.Warning);
+                
                 return;
             }}
 
@@ -1094,8 +1142,7 @@
             }}
 
             //Prepare path to save with included file
-            string PathWithFile = Path.Combine(PathOnly,
-                File.Name);
+            string PathWithFile = Path.Combine(PathOnly, File.Name);
 
             //Save file
             await using FileStream FileStream = new(PathWithFile, FileMode.Create);
@@ -1117,33 +1164,40 @@
             PathWithFile = $@""wwwroot/{{PathWithFile.Replace(""\\"", ""/"")}}"";
 
             //Import Excel file
-            List<{Table.Name}> List{Table.Name} = {Table.Name.ToLower()}ImportationService.ImportExcel(PathWithFile, User.UserId);
+            List<{Table.Name}> List{Table.Name} = {Table.Name.ToLower()}ImportationService.ImportExcel(PathWithFile, base.User!.UserId);
 
             //Save in DB
             await {Table.Name.ToLower()}Repository.AddRangeAsync(List{Table.Name});
 
             //Update page with new records
-            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
-                                                .GetAllBy{Table.Name}IdPaginatedAsync(
-                                                    """",
-                                                    CheckStrict,
-                                                    1,
-                                                    RegistersPerPage);
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdPaginatedAsync(
+                string.Empty,
+                CheckStrict,
+                1,
+                RegistersPerPage);
 
             TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Éxito"", ""Importación finalizada correctamente."", ""success"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", 
+                ""Éxito"", 
+                ""Importación finalizada correctamente."", 
+                NotificationTypeForJs.Success);
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Error"", ""Hubo un error. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                ""Error"", 
+                ""Hubo un error. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
             await Task.Delay(1500);
+
             ShowLoaderInImportationModal = false;
+
             await InvokeAsync(StateHasChanged);
         }}
     }}
@@ -1152,7 +1206,7 @@
     //EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORT
     //EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORTATIONS EXPORT
 
-    #region Exportations
+    #region EXPORTATIONS
     private async Task ExportToExcel()
     {{
         try
@@ -1160,22 +1214,26 @@
             ShowLoaderInExportationModal = true;
             await InvokeAsync(StateHasChanged);
 
-            DataTable dt{Table.Name} = new();
+            DataTable DataTable{Table.Name} = new();
 
             if (ExportationType == ""only-chosen"")
             {{
                 //Validation
-                if (lstLONG{Table.Name}Checked.Count == 0)
+                if (ListChecked{Table.Name}Ids.Count == 0)
                 {{
-                    await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Atención"", ""No hay registros para exportar. Proceso cancelado"", ""warning"");
+                    await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                        ""Atención"", 
+                        ""No hay registros para exportar. Proceso cancelado"", 
+                        NotificationTypeForJs.Warning);
+
                     return;
                 }}
 
-                dt{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdInDataTableAsync(lstLONG{Table.Name}Checked);
+                DataTable{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdInDataTableAsync(ListChecked{Table.Name}Ids);
             }}
             else
             {{
-                dt{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllInDataTableAsync();
+                DataTable{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllInDataTableAsync();
             }}
 
             //Prepare path to download
@@ -1192,27 +1250,33 @@
                 System.IO.Directory.CreateDirectory(PathOnly);
             }}
 
-            DownloadPathForExcel = $@""wwwroot/Downloads/ExcelFiles/{Table.Name}/{{base.User.UserId}}_{{DateTime.Now.ToString(""yyyy_MM_dd_HH_mm_ss_fff"")}}.xlsx"";
+            DownloadPathForExcel = $@""wwwroot/Downloads/ExcelFiles/{Table.Name}/{{base.User!.UserId}}_{{DateTime.Now.ToString(""yyyy_MM_dd_HH_mm_ss_fff"")}}.xlsx"";
 
-            {Table.Name.ToLower()}ExportationService.ExportToExcel(DownloadPathForExcel,
-            dt{Table.Name});
+            {Table.Name.ToLower()}ExportationService.ExportToExcel(DownloadPathForExcel, DataTable{Table.Name});
 
             //Delete wwwroot from path to download correctly
             DownloadPathForExcel = DownloadPathForExcel.Replace(""wwwroot"", """");
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Éxito"", ""Exportación a Excel finalizada correctamente."", ""success"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", 
+                ""Éxito"", 
+                ""Exportación a Excel finalizada correctamente."", 
+                NotificationTypeForJs.Success);
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Error"", ""Hubo un error al exportar a Excel. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", 
+                ""Error"", 
+                ""Hubo un error al exportar a Excel. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await Task.Delay(1500);
+
             ShowLoaderInExportationModal = false;
+
             await InvokeAsync(StateHasChanged);
         }}
     }}
@@ -1222,22 +1286,25 @@
         try
         {{
             ShowLoaderInExportationModal = true;
+
             await InvokeAsync(StateHasChanged);
 
-            
-
-            List<{Table.Name}?> List{Table.Name} = [];
+            List<{Table.Name}> List{Table.Name} = [];
 
             if (ExportationType == ""only-chosen"")
             {{
                 //Validation
-                if (lstLONG{Table.Name}Checked.Count == 0)
+                if (ListChecked{Table.Name}Ids.Count == 0)
                 {{
-                    await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Atención"", ""No hay registros para exportar. Proceso cancelado"", ""warning"");
+                    await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                        ""Atención"", 
+                        ""No hay registros para exportar. Proceso cancelado"", 
+                        NotificationTypeForJs.Warning);
+                    
                     return;
                 }}
 
-                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
+                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(ListChecked{Table.Name}Ids);
             }}
             else
             {{
@@ -1258,26 +1325,33 @@
                 System.IO.Directory.CreateDirectory(PathOnly);
             }}
 
-            DownloadPathForCSV = $@""wwwroot/Downloads/CSVFiles/{Table.Name}/{{base.User.UserId}}_{{DateTime.Now.ToString(""yyyy_MM_dd_HH_mm_ss_fff"")}}.csv"";
+            DownloadPathForCSV = $@""wwwroot/Downloads/CSVFiles/{Table.Name}/{{base.User!.UserId}}_{{DateTime.Now.ToString(""yyyy_MM_dd_HH_mm_ss_fff"")}}.csv"";
 
             {Table.Name.ToLower()}ExportationService.ExportToCSV(DownloadPathForCSV, List{Table.Name});
 
             //Delete wwwroot from path to download correctly
             DownloadPathForCSV = DownloadPathForCSV.Replace(""wwwroot"", """");            
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Éxito"", ""Exportación a CSV finalizada correctamente."", ""success"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"",
+                ""Éxito"", 
+                ""Exportación a CSV finalizada correctamente."", 
+                NotificationTypeForJs.Success);
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Error"", ""Hubo un error al exportar a CSV. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", 
+                ""Error"", 
+                ""Hubo un error al exportar a CSV. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await Task.Delay(1500);
+
             ShowLoaderInExportationModal = false;
+
             await InvokeAsync(StateHasChanged);
         }}
     }}
@@ -1287,20 +1361,25 @@
         try
         {{
             ShowLoaderInExportationModal = true;
+
             await InvokeAsync(StateHasChanged);
 
-            List<{Table.Name}?> List{Table.Name} = [];
+            List<{Table.Name}> List{Table.Name} = [];
 
             if (ExportationType == ""only-chosen"")
             {{
                 //Validation
-                if (lstLONG{Table.Name}Checked.Count == 0)
+                if (ListChecked{Table.Name}Ids.Count == 0)
                 {{
-                    await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Atención"", ""No hay registros para exportar. Proceso cancelado"", ""warning"");
+                    await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                        ""Atención"", 
+                        ""No hay registros para exportar. Proceso cancelado"", 
+                        NotificationTypeForJs.Warning);
+
                     return;
                 }}
 
-                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
+                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(ListChecked{Table.Name}Ids);
             }}
             else
             {{
@@ -1321,26 +1400,33 @@
                 System.IO.Directory.CreateDirectory(PathOnly);
             }}
 
-            DownloadPathForPDF = $@""wwwroot/Downloads/PDFFiles/{Table.Name}/{{base.User.UserId}}_{{DateTime.Now.ToString(""yyyy_MM_dd_HH_mm_ss_fff"")}}.pdf"";
+            DownloadPathForPDF = $@""wwwroot/Downloads/PDFFiles/{Table.Name}/{{base.User!.UserId}}_{{DateTime.Now.ToString(""yyyy_MM_dd_HH_mm_ss_fff"")}}.pdf"";
 
             {Table.Name.ToLower()}ExportationService.ExportToPDF(DownloadPathForPDF, List{Table.Name});
 
             //Delete wwwroot from path to download correctly
             DownloadPathForPDF = DownloadPathForPDF.Replace(""wwwroot"", """");
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Éxito"", ""Exportación a PDF finalizada correctamente."", ""success"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", 
+                ""Éxito"", 
+                ""Exportación a PDF finalizada correctamente."", 
+                NotificationTypeForJs.Success);
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Error"", ""Hubo un error al exportar a PDF. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", 
+                ""Error"", 
+                ""Hubo un error al exportar a PDF. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await Task.Delay(1500);
+
             ShowLoaderInExportationModal = false;
+
             await InvokeAsync(StateHasChanged);
         }}
     }}
@@ -1349,26 +1435,27 @@
     //MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIV
     //MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIVE ACTIONS MASSIV
 
-    #region Massive actions
+    #region MASSIVE ACTIONS
     private async Task MassiveActionCopy()
     {{
         try
         {{
             ShowLoaderInMassiveActionModal = true;
+
             await InvokeAsync(StateHasChanged);
 
-            List<{Table.Name}?> List{Table.Name} = [];
+            List<{Table.Name}> List{Table.Name} = [];
 
             if (MassiveActionType == ""only-chosen"")
             {{
                 //Validation
-                if (lstLONG{Table.Name}Checked.Count == 0)
+                if (ListChecked{Table.Name}Ids.Count == 0)
                 {{
-                    await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Atención"", ""No hay registros para copiar. Proceso cancelado"", ""warning"");
+                    await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Atención"", ""No hay registros para copiar. Proceso cancelado"", NotificationTypeForJs.Warning);
                     return;
                 }}
 
-                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
+                List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(ListChecked{Table.Name}Ids);
             }}
             else
             {{
@@ -1383,30 +1470,36 @@
 
             await {Table.Name.ToLower()}Repository.AddRangeAsync(List{Table.Name});
 
-            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
-                                                .GetAllBy{Table.Name}IdPaginatedAsync(
-                                                    """",
-                                                    CheckStrict,
-                                                    1,
-                                                    RegistersPerPage);
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdPaginatedAsync(
+                string.Empty,
+                CheckStrict,
+                1,
+                RegistersPerPage);
 
             TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
 
-            lstLONG{Table.Name}Checked.Clear();
+            ListChecked{Table.Name}Ids.Clear();
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Éxito"", ""Registros copiados correctamente."", ""success"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", 
+                ""Éxito"", 
+                ""Registros copiados correctamente."", 
+                NotificationTypeForJs.Success);
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Error"", ""Hubo un error al hacer el copiado masivo. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", 
+                ""Error"", 
+                ""Hubo un error al hacer el copiado masivo. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await Task.Delay(1500);
+
             ShowLoaderInMassiveActionModal = false;
+
             await InvokeAsync(StateHasChanged);
         }}
     }}
@@ -1421,13 +1514,17 @@
             if (MassiveActionType == ""only-chosen"")
             {{
                 //Validation
-                if (lstLONG{Table.Name}Checked.Count == 0)
+                if (ListChecked{Table.Name}Ids.Count == 0)
                 {{
-                    await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", ""Atención"", ""No hay registros para eliminar. Proceso cancelado"", ""warning"");
+                    await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithLimitedTime"", 
+                        ""Atención"",
+                        ""No hay registros para eliminar. Proceso cancelado"", 
+                        NotificationTypeForJs.Warning);
+
                     return;
                 }}
 
-                List<{Table.Name}?> List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(lstLONG{Table.Name}Checked);
+                List<{Table.Name}> List{Table.Name} = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdCheckedAsync(ListChecked{Table.Name}Ids);
 
                 await {Table.Name.ToLower()}Repository.DeleteManyAsync(List{Table.Name});
             }}
@@ -1436,30 +1533,36 @@
                 await {Table.Name.ToLower()}Repository.DeleteAllAsync();
             }}
 
-            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository
-                                                .GetAllBy{Table.Name}IdPaginatedAsync(
-                                                    """",
-                                                    CheckStrict,
-                                                    1,
-                                                    RegistersPerPage);
+            Paginated{Table.Name}DTO = await {Table.Name.ToLower()}Repository.GetAllBy{Table.Name}IdPaginatedAsync(
+                string.Empty,
+                CheckStrict,
+                1,
+                RegistersPerPage);
 
             TotalRegisters = Paginated{Table.Name}DTO.TotalRecordsInTheList;
 
-            lstLONG{Table.Name}Checked.Clear();
+            ListChecked{Table.Name}Ids.Clear();
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Éxito"", ""Registros eliminados correctamente"", ""success"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", 
+                ""Éxito"", 
+                ""Registros eliminados correctamente"", 
+                NotificationTypeForJs.Success);
         }}
         catch (Exception ex)
         {{
-            base.CatchException(ex);
+            await base.CatchException(ex);
 
-            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", ""Error"", ""Hubo un error al hacer el borrado masivo. Intente nuevamente."", ""error"");
+            await IJSRuntime.InvokeVoidAsync(""toastHelper.showWithUnlimitedTime"", 
+                ""Error"", 
+                ""Hubo un error al hacer el borrado masivo. Intente nuevamente."", 
+                NotificationTypeForJs.Error);
         }}
         finally
         {{
-            //Re-render the page
             await Task.Delay(1500);
+
             ShowLoaderInMassiveActionModal = false;
+
             await InvokeAsync(StateHasChanged);
         }}
     }}
